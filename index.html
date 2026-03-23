@@ -126,27 +126,62 @@
       transition: opacity 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .cta {
-      display: inline-flex;
+    .phone-wrap {
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      background: var(--accent);
-      color: var(--bg);
-      font-family: var(--mono);
-      font-size: 16px;
-      font-weight: 600;
-      text-decoration: none;
-      border: none;
-      border-radius: 2px;
-      padding: 0 32px;
-      height: 48px;
-      min-height: 44px;
-      cursor: pointer;
-      transition: opacity 100ms linear;
+      gap: 12px;
     }
 
-    .cta:hover {
-      opacity: 0.85;
+    .phone-input {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--accent-dim);
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.05);
+      height: 48px;
+      min-height: 44px;
+      max-width: 360px;
+      width: 100%;
+      padding: 0 16px;
+      gap: 12px;
+    }
+
+    .phone-prefix {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 16px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .phone-prefix .flag {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .phone-input input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      font-family: var(--mono);
+      font-size: 16px;
+      color: var(--text-primary);
+      min-width: 0;
+    }
+
+    .phone-input input::placeholder {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .phone-hint {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-secondary);
     }
 
     /* Footer */
@@ -213,12 +248,6 @@
       .hero {
         gap: 100px;
       }
-
-      .cta {
-        font-size: 18px;
-        height: 52px;
-        padding: 0 40px;
-      }
     }
 
   </style>
@@ -244,7 +273,13 @@
         <span class="line1">a members' club with no house.</span>
         <span class="line2">we go to <span class="pill"><span class="pill-text" id="rotating">film screenings</span></span> together.</span>
       </h1>
-      <a class="cta" href="https://chat.whatsapp.com/">Join the club →</a>
+      <div class="phone-wrap">
+        <form class="phone-input" id="phone-form">
+          <span class="phone-prefix"><span class="flag">🇬🇧</span> +44</span>
+          <input type="tel" id="phone" placeholder="22 2222 2222" autocomplete="tel">
+        </form>
+        <span class="phone-hint">enter your number to join.</span>
+      </div>
     </main>
 
     <footer>
@@ -254,9 +289,10 @@
 
   <div class="about-overlay" id="about-overlay">
     <div class="about-content">
-      <p>no building. no annual fee. no waitlist.</p>
-      <p>your membership is how many times you show up.</p>
-      <p>we track it. you keep the receipts.</p>
+      <p>a members' club with no house.</p>
+      <p>no building. no dress code.</p>
+      <p>just culture, together.</p>
+      <p>enter your number. we'll be in touch.</p>
     </div>
   </div>
 
@@ -282,6 +318,13 @@
         el.style.opacity = '1';
       }, 150);
     }, 2500);
+
+    // Phone form
+    document.getElementById('phone-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const num = document.getElementById('phone').value.trim();
+      if (num) console.log('+44 ' + num);
+    });
 
     // About modal
     const overlay = document.getElementById('about-overlay');
