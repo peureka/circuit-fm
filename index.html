@@ -102,10 +102,11 @@
       flex-direction: column;
       align-items: center;
       gap: 0;
-      font-size: 24px;
+      font-size: clamp(14px, 4.8vw, 48px);
       font-weight: 400;
       line-height: 1.5;
       text-transform: lowercase;
+      width: 100%;
     }
 
     .line1, .line2 {
@@ -119,7 +120,7 @@
       justify-content: center;
       border: 1px solid var(--accent-dim);
       border-radius: 2px;
-      padding: 0 12px;
+      padding: 0 0.3em;
       vertical-align: baseline;
     }
 
@@ -175,7 +176,7 @@
     .about-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.95);
+      background: #000000;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -212,16 +213,8 @@
         padding: 32px 40px;
       }
 
-      .headline {
-        font-size: 44px;
-      }
-
       .about-content {
         font-size: 18px;
-      }
-
-      .pill {
-        padding: 0 16px;
       }
 
       .hero {
@@ -235,11 +228,6 @@
       }
     }
 
-    @media (min-width: 1200px) {
-      .headline {
-        font-size: 48px;
-      }
-    }
   </style>
 </head>
 <body>
