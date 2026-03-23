@@ -102,9 +102,9 @@
       flex-direction: column;
       align-items: center;
       gap: 0;
-      font-size: clamp(14px, 4.8vw, 48px);
+      font-size: clamp(12px, 3.6vw, 48px);
       font-weight: 400;
-      line-height: 1.5;
+      line-height: 1.6;
       text-transform: lowercase;
       width: 100%;
     }
@@ -115,32 +115,26 @@
     }
 
     .pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      display: inline-block;
       border: 1px solid var(--accent-dim);
       border-radius: 2px;
       padding: 0 0.3em;
-      vertical-align: baseline;
+      vertical-align: bottom;
       overflow: hidden;
-      height: 1.4em;
-      position: relative;
+      height: 1.3em;
+      line-height: 1.3em;
     }
 
     .pill-inner {
-      position: relative;
-      display: flex;
-      flex-direction: column;
+      display: block;
       transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .pill-text {
+      display: block;
       white-space: nowrap;
-      height: 1.4em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      height: 1.3em;
+      line-height: 1.3em;
     }
 
     .cta {
@@ -310,13 +304,13 @@
     setInterval(() => {
       index = (index + 1) % items.length;
       nextText.textContent = items[index];
-      inner.style.transform = 'translateY(-1.4em)';
+      const h = pill.offsetHeight;
+      inner.style.transform = 'translateY(-' + h + 'px)';
 
       setTimeout(() => {
         inner.style.transition = 'none';
         inner.style.transform = 'translateY(0)';
         currentText.textContent = items[index];
-        // Force reflow then re-enable transition
         inner.offsetHeight;
         inner.style.transition = 'transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1)';
       }, 420);
