@@ -126,7 +126,7 @@
       transition: opacity 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .phone-wrap {
+    .email-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -152,7 +152,7 @@
       opacity: 0.85;
     }
 
-    .phone-reveal {
+    .email-reveal {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -163,17 +163,17 @@
       transition: opacity 100ms linear;
     }
 
-    .phone-reveal.active {
+    .email-reveal.active {
       opacity: 1;
       height: auto;
       overflow: visible;
     }
 
-    .phone-wrap .join-btn.hidden {
+    .email-wrap .join-btn.hidden {
       display: none;
     }
 
-    .phone-input {
+    .email-input {
       display: flex;
       align-items: center;
       border: 1px solid var(--accent-dim);
@@ -187,23 +187,7 @@
       gap: 12px;
     }
 
-    .phone-prefix {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--mono);
-      font-size: 16px;
-      color: var(--text-secondary);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .phone-prefix .flag {
-      font-size: 18px;
-      line-height: 1;
-    }
-
-    .phone-input input {
+    .email-input input {
       flex: 1;
       background: none;
       border: none;
@@ -214,11 +198,11 @@
       min-width: 0;
     }
 
-    .phone-input input::placeholder {
+    .email-input input::placeholder {
       color: rgba(255, 255, 255, 0.25);
     }
 
-    .phone-submit {
+    .email-submit {
       background: none;
       border: none;
       color: var(--accent);
@@ -230,11 +214,11 @@
       transition: opacity 100ms linear;
     }
 
-    .phone-submit:hover {
+    .email-submit:hover {
       opacity: 0.7;
     }
 
-    .phone-hint {
+    .email-hint {
       font-family: var(--mono);
       font-size: 12px;
       color: var(--text-secondary);
@@ -329,15 +313,14 @@
         <span class="line1">a members' club with no house.</span>
         <span class="line2">we go to <span class="pill"><span class="pill-text" id="rotating">film screenings</span></span> together.</span>
       </h1>
-      <div class="phone-wrap" id="phone-wrap">
+      <div class="email-wrap">
         <button class="join-btn" id="join-btn" type="button">Join the club →</button>
-        <div class="phone-reveal" id="phone-reveal">
-          <form class="phone-input" id="phone-form">
-            <span class="phone-prefix"><span class="flag">🇬🇧</span> +44</span>
-            <input type="tel" id="phone" placeholder="12 3456 7890" autocomplete="tel">
-            <button type="submit" class="phone-submit" id="phone-submit">→</button>
+        <div class="email-reveal" id="email-reveal">
+          <form class="email-input" id="email-form">
+            <input type="email" id="email" placeholder="you@email.com" autocomplete="email" required>
+            <button type="submit" class="email-submit" id="email-submit">→</button>
           </form>
-          <span class="phone-hint">enter your number to join.</span>
+          <span class="email-hint">enter your email to join.</span>
         </div>
       </div>
     </main>
@@ -352,7 +335,7 @@
       <p>a members' club with no house.</p>
       <p>no building. no dress code.</p>
       <p>just culture, together.</p>
-      <p>enter your number. we'll be in touch.</p>
+      <p>enter your email. we'll be in touch.</p>
     </div>
   </div>
 
@@ -389,27 +372,27 @@
       }, 150);
     }, 2500);
 
-    // Phone reveal + form
+    // Email reveal + form
     document.getElementById('join-btn').addEventListener('click', () => {
       document.getElementById('join-btn').classList.add('hidden');
-      const reveal = document.getElementById('phone-reveal');
+      const reveal = document.getElementById('email-reveal');
       reveal.classList.add('active');
-      document.getElementById('phone').focus();
+      document.getElementById('email').focus();
     });
 
-    document.getElementById('phone-form').addEventListener('submit', async (e) => {
+    document.getElementById('email-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const num = document.getElementById('phone').value.trim();
-      if (!num) return;
-      const btn = document.getElementById('phone-submit');
+      const email = document.getElementById('email').value.trim();
+      if (!email) return;
+      const btn = document.getElementById('email-submit');
       btn.textContent = '...';
       try {
         await addDoc(collection(db, 'signups'), {
-          phone: '+44 ' + num,
+          email: email,
           created_at: serverTimestamp(),
         });
-        document.getElementById('phone-reveal').innerHTML =
-          '<span class="phone-hint">we\'ll be in touch.</span>';
+        document.getElementById('email-reveal').innerHTML =
+          '<span class="email-hint">we\'ll be in touch.</span>';
       } catch (err) {
         console.error(err);
         btn.textContent = '→';
