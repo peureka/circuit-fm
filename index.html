@@ -392,8 +392,12 @@
           body: JSON.stringify({ email }),
         });
         if (!res.ok) throw new Error('signup failed');
+        const result = await res.json();
+        const msg = result.duplicate
+          ? "you're already on the list."
+          : "you're on the list.";
         document.getElementById('email-reveal').innerHTML =
-          '<span class="email-hint">we\'ll be in touch.</span>';
+          '<span class="email-hint">' + msg + '</span>';
       } catch (err) {
         console.error(err);
         btn.textContent = '→';
