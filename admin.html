@@ -193,21 +193,32 @@
   const gate = document.getElementById('auth-gate');
   const admin = document.getElementById('admin');
 
-  function unlock(t) {
-    token = t;
-    sessionStorage.setItem('cc_token', t);
-    gate.style.display = 'none';
-    admin.classList.add('visible');
-    loadStats();
+  async function tryUnlock(t) {
+    try {
+      const res = await fetch('/api/stats', { headers: { Authorization: 'Bearer ' + t } });
+      if (!res.ok) {
+        document.getElementById('auth-input').value = '';
+        document.getElementById('auth-input').placeholder = 'wrong password';
+        return;
+      }
+      token = t;
+      sessionStorage.setItem('cc_token', t);
+      gate.style.display = 'none';
+      admin.classList.add('visible');
+      const data = await res.json();
+      document.getElementById('stat').textContent = data.signupCount + ' signups';
+    } catch {
+      document.getElementById('auth-input').placeholder = 'connection error';
+    }
   }
 
-  if (token) unlock(token);
+  if (token) tryUnlock(token);
 
   document.getElementById('auth-btn').addEventListener('click', () => {
-    unlock(document.getElementById('auth-input').value);
+    tryUnlock(document.getElementById('auth-input').value.trim());
   });
   document.getElementById('auth-input').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') unlock(document.getElementById('auth-input').value);
+    if (e.key === 'Enter') tryUnlock(document.getElementById('auth-input').value.trim());
   });
 
   // Stats
