@@ -126,10 +126,36 @@ function createHandler({ db, adminSecret, timestamp, generateId }) {
       if (!cardSnap.exists) cardData.created_at = now;
       await cardRef.set(cardData, { merge: true });
 
+      // Vouch status advancement. This person is now a Floor+-tier
+      // member with their own card — i.e. they've become a voucher.
+      // Any vouch pointing at this email at "tapped" or "floor" advances
+      // to "voucher", scoring the voucher the full +14 cumulative. Idempotent:
+      // vouches already at "voucher" stay untouched.
+      const tappedSnap = await db
+        .collection("vouches")
+        .where("recipient_email", "==", cleanEmail)
+        .where("status", "==", "tapped")
+        .get();
+      const floorSnap = await db
+        .collection("vouches")
+        .where("recipient_email", "==", cleanEmail)
+        .where("status", "==", "floor")
+        .get();
+
+      let vouchesAdvanced = 0;
+      for (const vouchDoc of [...tappedSnap.docs, ...floorSnap.docs]) {
+        await db
+          .collection("vouches")
+          .doc(vouchDoc.id)
+          .set({ status: "voucher", voucher_at: now }, { merge: true });
+        vouchesAdvanced++;
+      }
+
       return res.status(200).json({
         chipUid: cleanChip,
         member_id: memberId,
         email: cleanEmail,
+        vouches_advanced: vouchesAdvanced,
       });
     } catch (err) {
       console.error("Assign card error:", err);

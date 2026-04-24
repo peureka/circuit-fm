@@ -260,6 +260,21 @@
     </div>
 
     <table><thead><tr><th style="width:30px;"></th><th>date</th><th>format</th><th>name</th><th>venue</th><th>status</th><th></th></tr></thead><tbody id="outing-list"></tbody></table>
+
+    <div class="section-header" style="margin-top:40px;">
+      <span class="section-title">record attendance</span>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin-bottom:16px;line-height:1.6;">
+      After an outing: pick it, paste attendee emails (one per line), submit. Matching vouches advance from tapped → floor (+3 each to the voucher's leaderboard score). Idempotent — re-submitting is safe.
+    </p>
+    <div class="form-row">
+      <div style="flex:2;"><label>outing</label><select id="at-outing"><option value="">pick an outing…</option></select></div>
+    </div>
+    <div><label>emails (one per line)</label><textarea id="at-emails" placeholder="someone@example.com&#10;another@example.com" style="min-height:100px;font-family:var(--mono);"></textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="record-attendance-btn">record attendance</button>
+    </div>
+    <div class="status" id="at-status"></div>
   </div>
 
   <!-- VENUES -->
@@ -675,6 +690,7 @@ async function loadOutings() {
   const d = await res.json();
   allOutings = d.outings || [];
   renderOutings();
+  renderAttendanceOutingPicker();
 
   // Load venues for datalist
   try {
@@ -683,6 +699,19 @@ async function loadOutings() {
     allVenues = vd.venues || [];
     $('#venue-datalist').innerHTML = allVenues.map(v => `<option value="${esc(v.name)}" data-neighbourhood="${esc(v.neighbourhood)}">`).join('');
   } catch {}
+}
+
+function renderAttendanceOutingPicker() {
+  const picker = $('#at-outing');
+  if (!picker) return;
+  // Prefer outings that are not "completed" yet in reverse-date order
+  // — typically the most recent past outing is what the curator records next.
+  const sorted = [...allOutings].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  picker.innerHTML = '<option value="">pick an outing…</option>' +
+    sorted.map(o => {
+      const label = `${o.date || '—'} · ${o.format || ''} · ${o.name || '(unnamed)'}`;
+      return `<option value="${esc(o.id)}">${esc(label)}</option>`;
+    }).join('');
 }
 
 function renderOutings() {
@@ -847,6 +876,25 @@ window.deleteVenue = async (id) => {
   await api('/api/venues', { method: 'DELETE', body: JSON.stringify({ id }) });
   loadVenues();
 };
+
+// RECORD ATTENDANCE
+$('#record-attendance-btn').addEventListener('click', async () => {
+  const outing_id = $('#at-outing').value;
+  const raw = $('#at-emails').value;
+  const emails = raw.split('\n').map(s => s.trim()).filter(Boolean);
+  if (!outing_id) { setStatus('at-status', 'pick an outing first', 'error'); return; }
+  if (emails.length === 0) { setStatus('at-status', 'paste at least one email', 'error'); return; }
+  setStatus('at-status', `recording ${emails.length}…`, '');
+  try {
+    const res = await api('/api/attendance', { method: 'POST', body: JSON.stringify({ outing_id, emails }) });
+    const data = await res.json();
+    if (!res.ok) { setStatus('at-status', data.error || 'record failed', 'error'); return; }
+    setStatus('at-status', `recorded ${data.recorded}, advanced ${data.vouches_advanced} vouch${data.vouches_advanced === 1 ? '' : 'es'} to floor`, 'success');
+    $('#at-emails').value = '';
+  } catch (err) {
+    setStatus('at-status', 'network error: ' + err.message, 'error');
+  }
+});
 
 // CARDS — list, provision, assign
 let allCards = [];

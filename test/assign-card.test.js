@@ -214,3 +214,125 @@ test("Email is normalised to lowercase throughout", async () => {
   const signup = await db.collection("signups").doc("mixedcase@example.com").get();
   assert.equal(signup.exists, true);
 });
+
+// ---- vouch status advancement (tapped / floor -> voucher) ----
+
+test("Assign-card advances tapped vouches to voucher", async () => {
+  const db = createFakeFirestore();
+  // Pre-seed a vouch at tapped — the new member was vouched by member-ada
+  await db.collection("vouches").doc("member-ada__new@example.com").set({
+    from_member_id: "member-ada",
+    recipient_email: "new@example.com",
+    status: "tapped",
+    created_at: new Date(),
+  });
+
+  const { handler } = makeHandler({ db });
+  const res = createFakeRes();
+  await handler(
+    authedReq({
+      chipUid: "new-chip",
+      email: "new@example.com",
+      name: "New Member",
+    }),
+    res,
+  );
+
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.vouches_advanced, 1);
+
+  const vouch = await db
+    .collection("vouches")
+    .doc("member-ada__new@example.com")
+    .get();
+  assert.equal(vouch.data().status, "voucher");
+  assert.ok(vouch.data().voucher_at);
+});
+
+test("Assign-card advances floor vouches to voucher (skipping tapped)", async () => {
+  const db = createFakeFirestore();
+  await db.collection("vouches").doc("v1__r@x.com").set({
+    from_member_id: "v1",
+    recipient_email: "r@x.com",
+    status: "floor",
+    floor_at: new Date(),
+  });
+
+  const { handler } = makeHandler({ db });
+  const res = createFakeRes();
+  await handler(
+    authedReq({ chipUid: "c1", email: "r@x.com", name: "Recipient" }),
+    res,
+  );
+
+  assert.equal(res.statusCode, 200);
+  const vouch = await db.collection("vouches").doc("v1__r@x.com").get();
+  assert.equal(vouch.data().status, "voucher");
+});
+
+test("Assign-card does NOT touch vouches already at voucher status", async () => {
+  const db = createFakeFirestore();
+  await db.collection("vouches").doc("v1__e@x.com").set({
+    from_member_id: "v1",
+    recipient_email: "e@x.com",
+    status: "voucher",
+    voucher_at: new Date("2026-04-25T00:00:00Z"),
+  });
+
+  const { handler } = makeHandler({ db });
+  const res = createFakeRes();
+  await handler(
+    authedReq({ chipUid: "c1", email: "e@x.com", name: "E" }),
+    res,
+  );
+
+  assert.equal(res.body.vouches_advanced, 0);
+});
+
+test("Assign-card with no matching vouches reports 0 advanced", async () => {
+  const { handler, db } = makeHandler();
+  const res = createFakeRes();
+  await handler(
+    authedReq({
+      chipUid: "solo-chip",
+      email: "solo@example.com",
+      name: "Solo",
+    }),
+    res,
+  );
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.vouches_advanced, 0);
+});
+
+test("Multiple vouches for the same recipient all advance to voucher", async () => {
+  // Edge case: same person got vouched by two different members.
+  // When they get their card, both vouchers should be credited.
+  const db = createFakeFirestore();
+  await db.collection("vouches").doc("v-a__popular@x.com").set({
+    from_member_id: "v-a",
+    recipient_email: "popular@x.com",
+    status: "tapped",
+  });
+  await db.collection("vouches").doc("v-b__popular@x.com").set({
+    from_member_id: "v-b",
+    recipient_email: "popular@x.com",
+    status: "floor",
+  });
+
+  const { handler } = makeHandler({ db });
+  const res = createFakeRes();
+  await handler(
+    authedReq({
+      chipUid: "chip-p",
+      email: "popular@x.com",
+      name: "Popular",
+    }),
+    res,
+  );
+
+  assert.equal(res.body.vouches_advanced, 2);
+  const va = await db.collection("vouches").doc("v-a__popular@x.com").get();
+  const vb = await db.collection("vouches").doc("v-b__popular@x.com").get();
+  assert.equal(va.data().status, "voucher");
+  assert.equal(vb.data().status, "voucher");
+});

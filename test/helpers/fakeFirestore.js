@@ -45,8 +45,43 @@ function createFakeFirestore() {
     };
   }
 
+  function matchesFilter(data, { field, op, value }) {
+    const v = data[field];
+    switch (op) {
+      case "==":
+        return v === value;
+      case "!=":
+        return v !== value;
+      case "in":
+        return Array.isArray(value) && value.includes(v);
+      default:
+        throw new Error(`fakeFirestore: unsupported op "${op}"`);
+    }
+  }
+
+  function makeQuery(docsMap, filters = []) {
+    return {
+      where(field, op, value) {
+        return makeQuery(docsMap, [...filters, { field, op, value }]);
+      },
+      orderBy() {
+        return makeQuery(docsMap, filters);
+      },
+      async get() {
+        const out = [];
+        for (const [id, data] of docsMap.entries()) {
+          if (filters.every((f) => matchesFilter(data, f))) {
+            out.push({ id, data: () => ({ ...data }) });
+          }
+        }
+        return { docs: out };
+      },
+    };
+  }
+
   function createCollectionRef(name) {
     const docs = getCollection(name);
+    const rootQuery = makeQuery(docs);
     const ref = {
       doc(id) {
         return createDocRef(docs, id);
@@ -56,16 +91,14 @@ function createFakeFirestore() {
         docs.set(id, { ...data });
         return createDocRef(docs, id);
       },
-      orderBy() {
-        return ref;
+      orderBy(...args) {
+        return rootQuery.orderBy(...args);
+      },
+      where(...args) {
+        return rootQuery.where(...args);
       },
       async get() {
-        return {
-          docs: Array.from(docs.entries()).map(([id, data]) => ({
-            id,
-            data: () => ({ ...data }),
-          })),
-        };
+        return rootQuery.get();
       },
       count() {
         return {
