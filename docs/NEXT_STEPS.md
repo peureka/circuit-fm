@@ -35,61 +35,58 @@ Build is complete, tested (122 tests), and deployed. The Culture Club ↔ Circui
 
 ---
 
-## NEW — Circuit integration setup (one-time, pre-May 20)
+## Circuit integration setup — STATUS
 
-**Status as of 2026-04-24:**
-- ✓ `CIRCUIT_WEBHOOK_SECRET` is set in cccircuit Vercel prod (value saved separately — check 1Password).
-- ✓ Webhook receiver is live and verified with a signed smoke test.
-- ☐ Circuit-side SQL to set up the Culture Club organisation + EnterpriseWebhook subscription — **you need to run this**.
-- ☐ Create the May 20 event on Circuit and paste its `Event.id` into the cccircuit outing.
-- ☐ Provision a Block for Soho House (physical chip UID + HMAC key from the Seritag delivery sheet).
+**Wired and live as of 2026-04-24.** The webhook plumbing is in place. What's left is creating the May 20 Event on Circuit and pasting its ID into the cccircuit outing.
 
-### Step A — Run the Circuit-side SQL (~5 min)
+### Provisioned (done — reference UUIDs)
 
-Get the prod DB connection string, then:
+| Piece | Value | Where |
+|---|---|---|
+| `CIRCUIT_WEBHOOK_SECRET` in cccircuit Vercel (Production) | stored in 1Password (64-char hex) | cccircuit Vercel project env |
+| Culture Club **Organisation** | `e87b58da-6d2a-4cf8-bdc6-60c698eac541` | Circuit prod DB, `organisations` table |
+| LINECONIC organiser → Culture Club **member link** | role `viewer`, relationship `owned` | Circuit prod DB, `organisation_members` table |
+| **EnterpriseWebhook** subscription | `3347a0e1-aa46-454b-89dd-d45c915a42fb` | Circuit prod DB, `enterprise_webhooks` table, events=`['attendance.created']`, active=true |
+| Webhook URL | `https://www.cccircuit.com/api/webhooks/circuit-checkin` | (stored in the EnterpriseWebhook row above) |
+| Webhook receiver smoke test | `HTTP 200 {action: skipped_unmapped_event}` | verified against prod |
 
-```bash
-# CIRCUIT_DB_URL = production DATABASE_URL from Circuit's Vercel project
-psql "$CIRCUIT_DB_URL" \
-  -v secret="<the-CIRCUIT_WEBHOOK_SECRET-value>" \
-  -f /Users/roch/Documents/Code/cccircuit/scripts/circuit-integration.sql
-```
+### LINECONIC organiser's existing Locations (discovered during setup)
 
-The script:
-1. Prints existing organisations, the LINECONIC organiser, and LINECONIC's locations — review before it prompts you to continue.
-2. Creates the `Culture Club` organisation (idempotent — `WHERE NOT EXISTS`).
-3. Links LINECONIC's organiser to Culture Club via an `organisation_members` row.
-4. Creates the `enterprise_webhooks` row pointing at cccircuit with the shared secret.
-5. Prints the final state for verification.
+| Location | id | City |
+|---|---|---|
+| **Shoreditch House** ← this is the May 20 LINECONIC venue | `07a6d12a-2662-4857-8ce2-04eb31c09b0b` | London |
+| Home House | `d2a84a6c-c2e6-4b41-9821-a852fb67b391` | London |
+| GoHub Studio | `b403f03f-d802-4c44-8387-da15f32539fc` | London |
+| Soho House New York | `c32552a4-0bac-4b1f-90c1-60111120d38b` | New York |
 
-### Step B — Create the May 20 event on Circuit
+(There's no Soho House Greek Street in Circuit — LINECONIC London runs at Shoreditch House.)
 
-Via Circuit's organiser event-creation flow:
-- Name: `LINECONIC May 20`
-- Organiser: LINECONIC
-- Location: Soho House Greek Street
+### Still to do (your actions)
+
+**1. Create the May 20 Event on Circuit** — via Circuit's organiser event-creation UI:
+- Organiser: LINECONIC (existing)
+- Location: **Shoreditch House** (`07a6d12a-2662-4857-8ce2-04eb31c09b0b`)
+- Name: `LINECONIC May 20` (or similar)
 - Date: 2026-05-20
-- Copy the resulting `Event.id`.
+- Copy the resulting `Event.id`
 
-### Step C — Link it to the cccircuit outing
+**2. Link it to the cccircuit outing** — `cccircuit.com/admin` → Outings → the May 20 outing → paste `Event.id` into the `circuit_event_id` field → save.
 
-In `cccircuit.com/admin` → Outings → edit the May 20 outing → paste the
-Circuit `Event.id` into the `circuit_event_id` field → save.
+**3. Provision a Block for Shoreditch House** — use Circuit's `scripts/provision-block.ts` with the chip UID + HMAC key from the Seritag delivery sheet. Mount at the entrance on the night.
 
-### Step D — Verify end-to-end (on May 18 dry run)
+**4. Smoke test on the May 18 dry run** — with a real chip UID of a provisioned Block at the event:
 
 ```bash
-CIRCUIT_WEBHOOK_SECRET="<value>" \
+CIRCUIT_WEBHOOK_SECRET="<value-from-1password>" \
   bash /Users/roch/Documents/Code/cccircuit/scripts/smoke-circuit-webhook.sh
 ```
 
-Expected: HTTP 200 with `action: "skipped_unmapped_event"` (uses a fake
-event id). If 401, the secret in shell env doesn't match what's in
-cccircuit's Vercel env.
+Expected: `HTTP 200` with `action: "skipped_unmapped_event"` (the smoke uses a fake event id, so unmapped is correct).
 
-For a real end-to-end test: tap the Block with your phone at the May 20
-event — the check-in flows through Circuit → cccircuit webhook →
-attendance doc → vouch advancement → leaderboard refresh.
+For a real end-to-end check: tap the Block with your phone at the Event. You should see:
+- Attendance doc appear in cccircuit's Firestore
+- Any vouches pointing at your email advance from `tapped` to `floor`
+- `/board` rank update for your voucher
 
 ---
 
