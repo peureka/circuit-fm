@@ -21,6 +21,16 @@ function createFakeFirestore() {
           docsMap.set(id, { ...data });
         }
       },
+      async update(data) {
+        // Real Firestore update() throws if the doc doesn't exist; mirror that.
+        const existing = docsMap.get(id);
+        if (!existing) {
+          const err = new Error("NOT_FOUND: No document to update");
+          err.code = 5;
+          throw err;
+        }
+        docsMap.set(id, { ...existing, ...data });
+      },
       async get() {
         const data = docsMap.get(id);
         return {

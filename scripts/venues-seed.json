@@ -1,0 +1,303 @@
+[
+  {
+    "name": "Close-Up Film Centre",
+    "neighbourhood": "Shoreditch",
+    "format": "Watch",
+    "contact": "",
+    "notes": "40-seat 35mm + digital cinema. Arthouse repertory. Anchor Watch venue."
+  },
+  {
+    "name": "The Arzner",
+    "neighbourhood": "Elephant & Castle",
+    "format": "Watch",
+    "contact": "",
+    "notes": "London's first LGBTQ+ cinema. Distinctive programming."
+  },
+  {
+    "name": "Rooftop Film Club",
+    "neighbourhood": "Peckham",
+    "format": "Watch",
+    "contact": "",
+    "notes": "Seasonal (May–Sep). Summer-slot Watch venue. Peckham anchor."
+  },
+  {
+    "name": "ICA Cinema",
+    "neighbourhood": "The Mall",
+    "format": "Watch",
+    "contact": "",
+    "notes": "Institutional anchor. Good for members' club cultural cachet."
+  },
+  {
+    "name": "Peckhamplex",
+    "neighbourhood": "Peckham",
+    "format": "Watch",
+    "contact": "",
+    "notes": "£6.99 flat rate. High-volume, low-price anchor."
+  },
+  {
+    "name": "Omeara",
+    "neighbourhood": "London Bridge",
+    "format": "Watch",
+    "contact": "Jayne Davis (COO, tvg)",
+    "notes": "Circuit-target: tvg. 320 cap. Live music / comedy. Warm via DICE account team or direct to Jayne."
+  },
+  {
+    "name": "Lafayette",
+    "neighbourhood": "King's Cross",
+    "format": "Watch",
+    "contact": "Jayne Davis (COO, tvg)",
+    "notes": "Circuit-target: tvg. 600 cap. Mid-size tvg venue. Audience progression data matters here."
+  },
+  {
+    "name": "The Social",
+    "neighbourhood": "Fitzrovia",
+    "format": "Watch",
+    "contact": "Jayne Davis (COO, tvg)",
+    "notes": "Circuit-target: tvg. 250 cap. Smallest tvg venue. Often the top-of-ladder entry point."
+  },
+  {
+    "name": "The Albany",
+    "neighbourhood": "Deptford",
+    "format": "Watch",
+    "contact": "Carolyn Ehman (Head of Business Development)",
+    "notes": "Circuit-target: Albany. Main venue in Albany's 3-site portfolio. Warm via MVT or Lisa Mead (Apples & Snakes / Albany Trustee)."
+  },
+  {
+    "name": "Canada Water Theatre",
+    "neighbourhood": "Rotherhithe",
+    "format": "Watch",
+    "contact": "Carolyn Ehman (Head of Business Development)",
+    "notes": "Circuit-target: Albany. Part of Albany's 3-site operator portfolio."
+  },
+  {
+    "name": "Rich Mix",
+    "neighbourhood": "Shoreditch",
+    "format": "Watch",
+    "contact": "",
+    "notes": "Film + live + comedy + community. Cross-format potential. Shoreditch anchor."
+  },
+  {
+    "name": "EartH",
+    "neighbourhood": "Dalston",
+    "format": "Watch",
+    "contact": "Auro Foxcroft",
+    "notes": "Circuit-target: VU X EartH (parked). 750-cap Art Deco theatre. Self-sustaining with Big Issue Invest backing. Revisit after tvg/Albany proven."
+  },
+  {
+    "name": "Run Dem Crew",
+    "neighbourhood": "Spitalfields",
+    "format": "Move",
+    "contact": "",
+    "notes": "Tuesdays. Runs from lululemon Spitalfields. PJ has existing lululemon relationships."
+  },
+  {
+    "name": "Peckham Pacers",
+    "neighbourhood": "Peckham",
+    "format": "Move",
+    "contact": "",
+    "notes": "Anti-competitive ethos. Peckham neighbourhood anchor for Move format."
+  },
+  {
+    "name": "Community Sauna Baths — Hackney Wick",
+    "neighbourhood": "Hackney Wick",
+    "format": "Move",
+    "contact": "",
+    "notes": "Flagship location. Sauna + cold plunge + breathwork. 6 London sites total; Hackney Wick is the main."
+  },
+  {
+    "name": "Community Sauna Baths — Peckham",
+    "neighbourhood": "Peckham",
+    "format": "Move",
+    "contact": "",
+    "notes": "Second-anchor Community Sauna Baths site. Closer to Peckham Pacers cluster."
+  },
+  {
+    "name": "London City Runners",
+    "neighbourhood": "Bermondsey",
+    "format": "Move",
+    "contact": "",
+    "notes": "Long-running SE London run club. Beer Mile / White Cube cluster."
+  },
+  {
+    "name": "Parliament Hill Lido",
+    "neighbourhood": "Kentish Town",
+    "format": "Move",
+    "contact": "",
+    "notes": "Outdoor pool. Dawn-swim Wildcard candidate (paired with Parliament Hill Cafe breakfast)."
+  },
+  {
+    "name": "Hampstead Heath Ponds",
+    "neighbourhood": "Hampstead",
+    "format": "Move",
+    "contact": "",
+    "notes": "Ladies', mens', mixed ponds. 6am dawn-swim Wildcard candidate (per v2 example angle: Monocle pitch)."
+  },
+  {
+    "name": "Grow Hackney",
+    "neighbourhood": "Hackney",
+    "format": "Move",
+    "contact": "New Venue Manager (hiring April 2026)",
+    "notes": "Circuit-target: Grow. Time-decaying adoption window: new VM = first-infrastructure-decision moment. Zero legacy systems."
+  },
+  {
+    "name": "Come Together / Test Kitchen",
+    "neighbourhood": "Forest Gate",
+    "format": "Eat",
+    "contact": "",
+    "notes": "£50-60/head. Communal cooking. Members pay their own way per v2."
+  },
+  {
+    "name": "Eleven98",
+    "neighbourhood": "East London",
+    "format": "Eat",
+    "contact": "",
+    "notes": "BYOB. Eco-minded. East London supper-club anchor."
+  },
+  {
+    "name": "Smoke & Lime",
+    "neighbourhood": "SE London",
+    "format": "Eat",
+    "contact": "",
+    "notes": "8-person Bengali. £50/head. Intimate format."
+  },
+  {
+    "name": "The Canton Arms",
+    "neighbourhood": "South Lambeth",
+    "format": "Eat",
+    "contact": "",
+    "notes": "Gastropub with long-running supper-club residencies."
+  },
+  {
+    "name": "Morley's Peckham",
+    "neighbourhood": "Peckham",
+    "format": "Eat",
+    "contact": "",
+    "notes": "Pop-up collaborations. Peckham cultural-hyperlocal anchor."
+  },
+  {
+    "name": "Peckham Bazaar",
+    "neighbourhood": "Peckham",
+    "format": "Eat",
+    "contact": "",
+    "notes": "Ottoman. Good group format (large shared plates)."
+  },
+  {
+    "name": "The Piehouse Co-op",
+    "neighbourhood": "South London",
+    "format": "Eat",
+    "contact": "Adam Gerrett & Dominic Spillane",
+    "notes": "Circuit-target: Piehouse. Reopened 2025 — zero legacy systems. Volunteer door is the sharpest pain point."
+  },
+  {
+    "name": "Pop Brixton",
+    "neighbourhood": "Brixton",
+    "format": "Eat",
+    "contact": "Philippe Castaing (co-founder, Make Shift)",
+    "notes": "Circuit-target: Make Shift. Already uses Embargo App loyalty — appetite for food-trader tooling proven."
+  },
+  {
+    "name": "Peckham Levels",
+    "neighbourhood": "Peckham",
+    "format": "Eat",
+    "contact": "Philippe Castaing (co-founder, Make Shift)",
+    "notes": "Circuit-target: Make Shift. Sister venue to Pop Brixton. 2 Make Shift venues total."
+  },
+  {
+    "name": "Deptford Lounge",
+    "neighbourhood": "Deptford",
+    "format": "Eat",
+    "contact": "Carolyn Ehman (Head of Business Development, Albany)",
+    "notes": "Circuit-target: Albany. Community venue + café — good for informal format."
+  },
+  {
+    "name": "South London Gallery",
+    "neighbourhood": "Peckham",
+    "format": "See",
+    "contact": "",
+    "notes": "Free. Gallery lates are a Wildcard candidate. Peckham anchor."
+  },
+  {
+    "name": "Whitechapel Gallery",
+    "neighbourhood": "Aldgate",
+    "format": "See",
+    "contact": "",
+    "notes": "Institutional. Gallery lates. Free during private views."
+  },
+  {
+    "name": "Tate Modern Lates",
+    "neighbourhood": "Bankside",
+    "format": "See",
+    "contact": "",
+    "notes": "Monthly lates. Draws a crowd; pair with dinner nearby."
+  },
+  {
+    "name": "Copeland Gallery",
+    "neighbourhood": "Peckham",
+    "format": "See",
+    "contact": "Alexander Wilson (landlord) / Mickey Smith (CLF)",
+    "notes": "Circuit-target: Copeland / CLF. Trigger: CLF Art Cafe reopens Spring 2026. Two conversations: Wilson (hardware) + Smith (adoption)."
+  },
+  {
+    "name": "CLF Art Cafe",
+    "neighbourhood": "Peckham",
+    "format": "See",
+    "contact": "Mickey Smith (info@clfartcafe.org)",
+    "notes": "Circuit-target: Copeland / CLF. Block install during renovation = infrastructure from day one."
+  },
+  {
+    "name": "Colour Factory",
+    "neighbourhood": "Hackney Wick",
+    "format": "See",
+    "contact": "",
+    "notes": "Canal-side warehouse. Gallery + event space. Hackney Wick anchor."
+  },
+  {
+    "name": "White Cube Bermondsey",
+    "neighbourhood": "Bermondsey",
+    "format": "See",
+    "contact": "",
+    "notes": "Blue-chip gallery. Private views often include wine. Bermondsey anchor."
+  },
+  {
+    "name": "The Approach",
+    "neighbourhood": "Bethnal Green",
+    "format": "See",
+    "contact": "",
+    "notes": "Pub-upstairs gallery. Distinct East London scene."
+  },
+  {
+    "name": "Auto Italia",
+    "neighbourhood": "Bethnal Green",
+    "format": "See",
+    "contact": "",
+    "notes": "Artist-run. Critically serious programming."
+  },
+  {
+    "name": "Bold Tendencies",
+    "neighbourhood": "Peckham",
+    "format": "See",
+    "contact": "",
+    "notes": "Seasonal (summer). Rooftop art + music. Multitrop. Peckham anchor."
+  },
+  {
+    "name": "MOTH Club",
+    "neighbourhood": "Hackney",
+    "format": "Watch",
+    "contact": "Keith Miller (head programmer, LNZRT)",
+    "notes": "Circuit-target: LNZRT (parked). 30K-signature petition fight distracts team. Revisit after MOTH Club planning resolves."
+  },
+  {
+    "name": "Shacklewell Arms",
+    "neighbourhood": "Dalston",
+    "format": "Watch",
+    "contact": "Keith Miller (head programmer, LNZRT)",
+    "notes": "Circuit-target: LNZRT (parked). Sister to MOTH. DICE-exclusive routing."
+  },
+  {
+    "name": "Mothership Group — Queen of Hoxton",
+    "neighbourhood": "Shoreditch",
+    "format": "Watch",
+    "contact": "Heather Lawton (Creative Director)",
+    "notes": "Circuit-target: Mothership. 3 Shoreditch/Hoxton venues, 1000+ events/yr. Revisit after model proven elsewhere."
+  }
+]
