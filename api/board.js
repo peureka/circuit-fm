@@ -53,6 +53,13 @@ function createHandler({ db }) {
         }),
       );
 
+      // Edge-cache the response. 60s fresh, 30s stale-while-revalidate.
+      // A new vouch showing up within 60s isn't time-critical; the cache
+      // absorbs any traffic spike against the board page.
+      res.setHeader(
+        "Cache-Control",
+        "public, s-maxage=60, stale-while-revalidate=30",
+      );
       return res.status(200).json({
         entries,
         count: entries.length,

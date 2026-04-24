@@ -149,3 +149,32 @@ test("new signup sends a confirmation email via resend", async () => {
 });
 
 // Vouch-creation tests migrated to test/vouch.test.js (separate endpoint).
+
+// ---- hardening: input length limits (session 5) ----
+
+test("POST with email longer than 100 chars returns 400", async () => {
+  const { handler } = makeHandler();
+  const res = createFakeRes();
+  const longEmail = "a".repeat(95) + "@x.co"; // 100 chars
+  await handler(
+    {
+      method: "POST",
+      body: { email: longEmail + "xx", name: "Name" }, // > 100
+    },
+    res,
+  );
+  assert.equal(res.statusCode, 400);
+});
+
+test("POST with name longer than 100 chars returns 400", async () => {
+  const { handler } = makeHandler();
+  const res = createFakeRes();
+  await handler(
+    {
+      method: "POST",
+      body: { email: "e@x.com", name: "n".repeat(101) },
+    },
+    res,
+  );
+  assert.equal(res.statusCode, 400);
+});

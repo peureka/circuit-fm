@@ -11,12 +11,26 @@ function createHandler({ db, resend, segmentId, from, timestamp }) {
     const body = req.body || {};
     const { email, name } = body;
 
-    if (!email || typeof email !== "string" || !email.includes("@")) {
+    // Length caps mirror the Firestore schema rule on signups. Defensive:
+    // the admin SDK bypasses rules, so we must enforce bounds here too.
+    const MAX_EMAIL_LEN = 100;
+    const MAX_NAME_LEN = 100;
+
+    if (
+      !email ||
+      typeof email !== "string" ||
+      !email.includes("@") ||
+      email.length > MAX_EMAIL_LEN
+    ) {
       return res.status(400).json({ error: "Invalid email" });
     }
 
     if (name !== undefined) {
-      if (typeof name !== "string" || name.trim().length === 0) {
+      if (
+        typeof name !== "string" ||
+        name.trim().length === 0 ||
+        name.length > MAX_NAME_LEN
+      ) {
         return res.status(400).json({ error: "Invalid name" });
       }
     }

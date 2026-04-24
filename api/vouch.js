@@ -19,11 +19,23 @@ function createHandler({ db, timestamp }) {
     const body = req.body || {};
     const { voucher_id, email } = body;
 
-    if (typeof voucher_id !== "string" || voucher_id.trim().length === 0) {
+    const MAX_VOUCHER_ID_LEN = 128;
+    const MAX_EMAIL_LEN = 100;
+
+    if (
+      typeof voucher_id !== "string" ||
+      voucher_id.trim().length === 0 ||
+      voucher_id.length > MAX_VOUCHER_ID_LEN
+    ) {
       return res.status(400).json({ error: "Invalid voucher_id" });
     }
 
-    if (!email || typeof email !== "string" || !email.includes("@")) {
+    if (
+      !email ||
+      typeof email !== "string" ||
+      !email.includes("@") ||
+      email.length > MAX_EMAIL_LEN
+    ) {
       return res.status(400).json({ error: "Invalid email" });
     }
 

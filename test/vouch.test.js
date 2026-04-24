@@ -168,3 +168,31 @@ test("voucher_id is trimmed before use", async () => {
   const doc = await db.collection("vouches").doc("m-trim__e@example.com").get();
   assert.equal(doc.exists, true);
 });
+
+// ---- hardening: input length limits (session 5) ----
+
+test("POST with voucher_id longer than 128 chars returns 400", async () => {
+  const { handler } = makeHandler();
+  const res = createFakeRes();
+  await handler(
+    {
+      method: "POST",
+      body: { voucher_id: "x".repeat(129), email: "e@example.com" },
+    },
+    res,
+  );
+  assert.equal(res.statusCode, 400);
+});
+
+test("POST with email longer than 100 chars returns 400", async () => {
+  const { handler } = makeHandler();
+  const res = createFakeRes();
+  await handler(
+    {
+      method: "POST",
+      body: { voucher_id: "m1", email: "a".repeat(96) + "@x.co" }, // 101 chars
+    },
+    res,
+  );
+  assert.equal(res.statusCode, 400);
+});

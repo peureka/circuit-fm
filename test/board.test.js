@@ -153,3 +153,16 @@ test("Response includes generated_at timestamp", async () => {
   // Parses as a Date
   assert.ok(!isNaN(new Date(res.body.generated_at).getTime()));
 });
+
+// ---- hardening: caching (session 5) ----
+
+test("Response sets Cache-Control header for edge caching", async () => {
+  const { handler } = makeHandler();
+  const res = createFakeRes();
+  await handler({ method: "GET", query: {} }, res);
+
+  const cc = res.headers["Cache-Control"];
+  assert.ok(cc, "Cache-Control header missing");
+  assert.match(cc, /s-maxage=\d+/);
+  assert.match(cc, /stale-while-revalidate=\d+/);
+});
