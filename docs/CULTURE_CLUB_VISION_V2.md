@@ -66,7 +66,11 @@ When someone lapses for 3+ months, they are gracefully removed and the spot open
 
 RSVP, check-in, attendance tracking, unlock rules, Digital Stubs, recognition emails, Core Member computation. Circuit is the consent gate. The first time a member RSVPs, they see the consent checkbox (unchecked by default, readable terms, per SPEC.md). WhatsApp group membership does not constitute GDPR consent. Circuit's RSVP flow does.
 
-The stack: email for broadcast (free), WhatsApp for community (free, capped at 200), Circuit for infrastructure (the product).
+### The Card is the artefact
+
+The Culture Club Card is a matte black NFC card handed to a member by the curator at their first outing (Floor tier — see Membership Model below). One card per member, kept for life. The card is the physical proof of membership and the mechanism by which members vouch strangers into the Queue: hand the card to a friend, the friend taps their phone to it, the friend lands on a join page crediting the member. See `avdience-docs/docs/culture-club/CULTURE_CLUB_CARD.md` for the full hardware and tap spec.
+
+The stack: email for broadcast (free), WhatsApp for community (free, capped at 200), the Card for vouching (handed at the door), Circuit for infrastructure (the product).
 
 ---
 
@@ -95,6 +99,50 @@ The behavioural science validates this structure. Jeffrey Hall's 2019 research e
 ### The Key
 
 After 12 outings, you get the ability to invite one person to the next outing. Not a plus-one to every event forever. One invite, one time, refreshed at the next milestone. This is how the club grows: through its most committed members bringing in one person they think belongs. The growth mechanic is built into the attendance model. Circuit tracks who invited whom through the ambassador attribution field.
+
+---
+
+## The Card and the Board
+
+A second growth mechanism runs alongside the attendance progression: the physical Culture Club Card and the public leaderboard at `cccircuit.com/board`. These are marketing additions on top of the membership model — they do not replace the attendance tiers above.
+
+The governing principle: **attendance gates intimacy, rank gates exposure.** Two parallel reward axes, two different reward types — because they reward two different behaviours.
+
+### The Card
+
+Every member gets a Culture Club Card the first time they attend an outing (Floor tier). The curator (Ciara in London) carries a tin of cards to every outing and hands one over at check-in. One card per member, kept for life. There is no shipping form. There is no postal step. The handover is the moment.
+
+Members use the card to vouch strangers into the Queue: hand the card to a friend, the friend taps their phone to it, a URL opens that says *"X thinks you belong in Culture Club"* and routes the friend to the join form. The friend lands in the Queue with attribution to the voucher. Every accepted vouch scores on the leaderboard.
+
+The card does not check guests into events (Block hardware does that), does not RSVP to events (Circuit does that), and does not unlock attendance tiers (showing up does that). The card has one job: be tapped by a stranger's phone to deliver a credited invite.
+
+See `avdience-docs/docs/culture-club/CULTURE_CLUB_CARD.md` for the physical spec, the chip provisioning, and the tap landing page details.
+
+### The Board
+
+A public leaderboard at `cccircuit.com/board`, visible to anyone, ranks members by their vouching record:
+
+- **+1** when a recipient joins the Queue
+- **+3** when the recipient attends their first outing (reaches Floor)
+- **+10** when the recipient themselves becomes a voucher (reaches Floor and gets a card)
+
+The scoring weights conversion, not volume. Handing a card to a stranger who never shows up scores 1. Handing a card to someone who passes through to become a recruiting voucher themselves scores 14 plus all their downstream vouches. The leaderboard is self-rationing — sloppy vouching tanks rank, disciplined vouching compounds it.
+
+### What the rank axis unlocks
+
+The top of the board unlocks invites to **exclusive Circuit-paid premium events** — distinct from the Core Member intimate programming above. These are designed to be photogenic, location-novel, and share-worthy: the kind of event a top voucher will post about. Circuit pays as customer acquisition spend. The events function as recruitment content engines.
+
+### Why the two axes don't collide
+
+The attendance axis (Queue → Floor → Regulars → Circuit Core → Key) rewards *showing up*. Its rewards are intimate by design: WhatsApp, early RSVP, 10-person dinners, +1 invites. These events only work because the people in the room have shown up together repeatedly.
+
+The rank axis (the leaderboard) rewards *recruiting well*. Its rewards are exposure by design: photogenic, share-worthy events that produce content for the next cohort.
+
+A loyal member who attends every outing but recruits nobody earns the full attendance progression and none of the rank-axis perks. A high-converting voucher who has only attended once gets onto the leaderboard quickly but doesn't get into the Core Member dinners. A member who does both earns both, and at scale that's the ideal Culture Club member.
+
+### Why this is paid by Circuit, not members
+
+Both event tracks are CAC for Circuit. Intimate programming generates the longitudinal attendance data; rank-axis premium events generate the recruitment marketing. The moment members pay for either kind of access — putting money *into* the loop — rank becomes purchasable and the currency deflates. Cash-free is what makes the status real.
 
 ---
 
@@ -128,9 +176,13 @@ Wildcard criteria: photographable, location-novel (somewhere Culture Club has no
 2. **Sober rave at Ministry of Sound's Dry Day Rave.** Angle for LadBible: "This London WhatsApp group is doing club nights without the hangover."
 3. **Day trip to Margate — Turner Contemporary, Dreamland, supper club at a Harbour Arm restaurant.** Angle for Time Out: "The members' club that took 40 people to the seaside."
 
+### LINECONIC in the rotation
+
+LINECONIC (Live. Presents. Out Loud., the Avdience format hosted monthly at Soho House London) slots into the rotation as a Watch outing — sometimes as a Wildcard. Cadence: one or two LINECONIC outings per month as the Avdience format slate grows. LINECONIC is the one Culture Club outing that Avdience produces directly, rather than curates from a third-party organiser. Every other outing remains curation-not-creation. The rotation is not allowed to be saturated by LINECONIC alone — Move, Eat, See keep the monthly circuit honest.
+
 ### Curation, Not Creation
 
-Culture Club never produces events. It curates attendance at existing events. This keeps operational cost near zero and puts the club in a collaborative relationship with every organiser in London rather than a competitive one. You bring 15 people to their event. You are their best table. The relationship is inherently warm.
+Apart from LINECONIC, Culture Club never produces events. It curates attendance at existing events. This keeps operational cost near zero and puts the club in a collaborative relationship with every organiser in London rather than a competitive one. You bring 15 people to their event. You are their best table. The relationship is inherently warm.
 
 The organiser relationship is the warm acquisition channel for Circuit. After 3-5 events where Culture Club brings a consistent group, the organiser has seen Circuit in action at their own event. The pitch to use Circuit is no longer theoretical. "We brought 15 people to your screening and 11 came back the next month. Here is the dashboard."
 
