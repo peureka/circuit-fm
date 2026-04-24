@@ -305,14 +305,29 @@ function api(path, opts = {}) {
 
 // AUTH
 async function tryUnlock(t) {
+  // Set the candidate token BEFORE calling api() — api() reads the outer
+  // `token` for its Authorization header, so the value being verified has
+  // to be in place first. Roll back on failure so a bad attempt doesn't
+  // poison future calls.
+  const prevToken = token;
+  token = t;
   try {
     const res = await api('/api/stats');
-    if (!res.ok) { $('#auth-input').value = ''; $('#auth-input').placeholder = 'wrong password'; return; }
-    token = t; sessionStorage.setItem('cc_token', t);
+    if (!res.ok) {
+      token = prevToken;
+      sessionStorage.removeItem('cc_token');
+      $('#auth-input').value = '';
+      $('#auth-input').placeholder = 'wrong password';
+      return;
+    }
+    sessionStorage.setItem('cc_token', t);
     $('#auth-gate').style.display = 'none';
     $('#admin').classList.add('visible');
     loadDashboard();
-  } catch { $('#auth-input').placeholder = 'connection error'; }
+  } catch {
+    token = prevToken;
+    $('#auth-input').placeholder = 'connection error';
+  }
 }
 if (token) tryUnlock(token);
 $('#auth-btn').addEventListener('click', () => tryUnlock($('#auth-input').value.trim()));
