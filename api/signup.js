@@ -9,7 +9,7 @@ function createHandler({ db, resend, segmentId, from, timestamp }) {
     }
 
     const body = req.body || {};
-    const { email, name, voucher_id } = body;
+    const { email, name } = body;
 
     if (!email || typeof email !== "string" || !email.includes("@")) {
       return res.status(400).json({ error: "Invalid email" });
@@ -21,18 +21,8 @@ function createHandler({ db, resend, segmentId, from, timestamp }) {
       }
     }
 
-    // voucher_id is optional. Must be a string if present. Empty string is
-    // treated as "no voucher" (handles missing ?v= query param on the client).
-    if (voucher_id !== undefined && typeof voucher_id !== "string") {
-      return res.status(400).json({ error: "Invalid voucher_id" });
-    }
-
     const clean = email.trim().toLowerCase();
     const cleanName = typeof name === "string" ? name.trim() : null;
-    const cleanVoucher =
-      typeof voucher_id === "string" && voucher_id.trim().length > 0
-        ? voucher_id.trim()
-        : null;
 
     try {
       const docData = {
@@ -45,23 +35,6 @@ function createHandler({ db, resend, segmentId, from, timestamp }) {
         .collection("signups")
         .doc(clean)
         .set(docData, { merge: true });
-
-      // If this signup was vouched via a card tap, record the vouch.
-      // Deterministic doc ID dedups repeat signups from the same voucher
-      // for the same recipient; created_at is preserved on the original.
-      if (cleanVoucher) {
-        const vouchId = `${cleanVoucher}__${clean}`;
-        const vouchRef = db.collection("vouches").doc(vouchId);
-        const existing = await vouchRef.get();
-        if (!existing.exists) {
-          await vouchRef.set({
-            from_member_id: cleanVoucher,
-            recipient_email: clean,
-            status: "tapped",
-            created_at: timestamp(),
-          });
-        }
-      }
 
       let duplicate = false;
       if (resend && segmentId) {

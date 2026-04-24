@@ -393,15 +393,28 @@
       const btn = document.getElementById('email-submit');
       btn.textContent = '...';
       try {
-        const payload = { email, name };
-        if (voucherId) payload.voucher_id = voucherId;
-        const res = await fetch('/api/signup', {
+        // Signup is the primary action. Vouching is best-effort attribution —
+        // we fire both in parallel so attribution doesn't delay the ack, and
+        // a failed vouch doesn't block the signup success UX.
+        const signupPromise = fetch('/api/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({ email, name }),
         });
-        if (!res.ok) throw new Error('signup failed');
-        const result = await res.json();
+        const vouchPromise = voucherId
+          ? fetch('/api/vouch', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ voucher_id: voucherId, email }),
+            }).catch((err) => {
+              console.error('vouch failed:', err);
+              return null;
+            })
+          : Promise.resolve(null);
+
+        const [signupRes] = await Promise.all([signupPromise, vouchPromise]);
+        if (!signupRes.ok) throw new Error('signup failed');
+        const result = await signupRes.json();
         const msg = result.duplicate
           ? "you're already on the list."
           : "you're on the list.";
