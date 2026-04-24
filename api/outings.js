@@ -25,8 +25,17 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === "POST") {
-    const { name, format, day, date, venue, neighbourhood, status, rsvpUrl } =
-      req.body || {};
+    const {
+      name,
+      format,
+      day,
+      date,
+      venue,
+      neighbourhood,
+      status,
+      rsvpUrl,
+      circuit_event_id,
+    } = req.body || {};
     if (!name || !format) {
       return res.status(400).json({ error: "name and format required" });
     }
@@ -39,6 +48,7 @@ module.exports = async function handler(req, res) {
       neighbourhood: neighbourhood || "",
       status: status || "draft",
       rsvpUrl: rsvpUrl || "",
+      circuit_event_id: circuit_event_id || "",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     return res.status(200).json({ ok: true, id: doc.id });

@@ -253,6 +253,9 @@
         <div><label>rsvp url</label><input id="o-rsvp"></div>
         <div><label>status</label><select id="o-status"><option>draft</option><option>shortlisted</option><option>broadcast</option><option>completed</option></select></div>
       </div>
+      <div class="form-row">
+        <div style="flex:2;"><label>circuit event id <span style="color:var(--muted);font-weight:normal;">(optional — links to the Circuit event so check-ins auto-populate attendance)</span></label><input id="o-circuit-event-id" placeholder="e.g. evt_abc123"></div>
+      </div>
       <div class="btn-row">
         <button class="btn btn-primary btn-small" id="save-outing">save</button>
         <button class="btn btn-small" id="cancel-outing">cancel</button>
@@ -822,14 +825,14 @@ $('#o-venue').addEventListener('change', () => {
 
 $('#add-outing-btn').addEventListener('click', () => {
   editingOutingId = null;
-  ['o-name','o-day','o-date','o-venue','o-neighbourhood','o-rsvp'].forEach(id => $(`#${id}`).value = '');
+  ['o-name','o-day','o-date','o-venue','o-neighbourhood','o-rsvp','o-circuit-event-id'].forEach(id => $(`#${id}`).value = '');
   $('#o-format').value = currentFormat();
   $('#o-status').value = 'draft';
   $('#outing-form').style.display = 'block';
 });
 $('#cancel-outing').addEventListener('click', () => { $('#outing-form').style.display = 'none'; });
 $('#save-outing').addEventListener('click', async () => {
-  const body = { name: $('#o-name').value.trim(), format: $('#o-format').value, day: $('#o-day').value.trim(), date: $('#o-date').value.trim(), venue: $('#o-venue').value.trim(), neighbourhood: $('#o-neighbourhood').value.trim(), rsvpUrl: $('#o-rsvp').value.trim(), status: $('#o-status').value };
+  const body = { name: $('#o-name').value.trim(), format: $('#o-format').value, day: $('#o-day').value.trim(), date: $('#o-date').value.trim(), venue: $('#o-venue').value.trim(), neighbourhood: $('#o-neighbourhood').value.trim(), rsvpUrl: $('#o-rsvp').value.trim(), status: $('#o-status').value, circuit_event_id: $('#o-circuit-event-id').value.trim() };
   if (!body.name) return;
   if (editingOutingId) body.id = editingOutingId;
   await api('/api/outings', { method: editingOutingId ? 'PUT' : 'POST', body: JSON.stringify(body) });
