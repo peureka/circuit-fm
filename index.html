@@ -185,6 +185,7 @@
     .email-input {
       display: flex;
       align-items: center;
+      gap: 8px;
       border: 1px solid var(--accent-dim);
       border-radius: 2px;
       background: rgba(255, 255, 255, 0.05);
@@ -326,10 +327,11 @@
         <button class="join-btn" id="join-btn" type="button">Join the club →</button>
         <div class="email-reveal" id="email-reveal">
           <form class="email-input" id="email-form">
+            <input type="text" id="name" placeholder="your name" autocomplete="name" required>
             <input type="email" id="email" placeholder="you@email.com" autocomplete="email" required>
             <button type="submit" class="email-submit" id="email-submit">→</button>
           </form>
-          <span class="email-hint">enter your email to join.</span>
+          <span class="email-hint">enter your name and email to join.</span>
         </div>
       </div>
     </main>
@@ -382,14 +384,15 @@
     document.getElementById('email-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value.trim();
-      if (!email) return;
+      const name = document.getElementById('name').value.trim();
+      if (!email || !name) return;
       const btn = document.getElementById('email-submit');
       btn.textContent = '...';
       try {
         const res = await fetch('/api/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email, name }),
         });
         if (!res.ok) throw new Error('signup failed');
         const result = await res.json();
