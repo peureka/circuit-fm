@@ -111,7 +111,6 @@
       align-items: center;
       gap: 24px;
       width: 100%;
-      max-width: 720px;
     }
 
     .brand-ring-scene {
@@ -147,18 +146,24 @@
       color: var(--text-primary);
     }
 
+    /* Both sublines must fit on one line at every viewport.
+       Supporting line is 60 chars — the limiting case for font-size scaling. */
     .subline {
-      font-size: clamp(16px, 2.6vw, 24px);
+      font-size: clamp(11px, 3.4vw, 22px);
       font-weight: 400;
       line-height: 1.4;
       color: var(--text-primary);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
     }
 
     .supporting {
-      font-size: clamp(13px, 1.8vw, 16px);
+      font-size: clamp(10px, 2.6vw, 15px);
       font-weight: 400;
       line-height: 1.5;
       color: var(--text-secondary);
+      letter-spacing: -0.005em;
+      white-space: nowrap;
     }
 
     .email-wrap {
