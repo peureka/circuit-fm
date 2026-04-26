@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0A0A0A"/>
+  <circle cx="600" cy="230" r="78" fill="none" stroke="#FF4400" stroke-width="10"/>
+  <text x="600" y="430"
+        text-anchor="middle"
+        font-family="Menlo, 'SF Mono', Consolas, monospace"
+        font-size="108"
+        font-weight="600"
+        letter-spacing="-2"
+        fill="#F5F5F5">Circuit FM</text>
+  <text x="600" y="500"
+        text-anchor="middle"
+        font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+        font-size="32"
+        font-weight="400"
+        fill="#A0A0A0">A members' club with no house. It moves with you.</text>
+  <text x="600" y="555"
+        text-anchor="middle"
+        font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif"
+        font-size="22"
+        font-weight="400"
+        fill="#666666"
+        letter-spacing="2">LONDON 2026</text>
+</svg>
