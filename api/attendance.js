@@ -1,4 +1,4 @@
-// Admin: record who attended a Culture Club outing. Recording attendance
+// Admin: record who attended a Circuit FM outing. Recording attendance
 // advances matching vouches from "tapped" to "floor" so the leaderboard
 // reflects conversion quality (+3 per converted recipient), not raw handouts.
 //

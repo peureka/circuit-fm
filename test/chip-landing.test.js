@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 
 const {
   createHandler,
-} = require("/Users/roch/Documents/Code/cccircuit/api/c/[chipUid].js");
+} = require("/Users/roch/Code/cccircuit/api/c/[chipUid].js");
 const { createFakeFirestore } = require("./helpers/fakeFirestore");
 const { createFakeRes } = require("./helpers/fakeRes");
 
@@ -38,7 +38,7 @@ test("GET with a valid active card renders HTML naming the vouching member", asy
   assert.equal(res.statusCode, 200);
   assert.equal(res.headers["Content-Type"], "text/html; charset=utf-8");
   assert.match(res.body, /Ada Lovelace/);
-  assert.match(res.body, /thinks you belong in Culture Club/);
+  assert.match(res.body, /thinks you belong in Circuit FM/);
   assert.match(res.body, /\/\?v=member-1/);
 });
 
@@ -147,5 +147,5 @@ test("member without a name falls back to a generic label", async () => {
   await handler({ method: "GET", query: { chipUid: "nameless-card" } }, res);
 
   assert.equal(res.statusCode, 200);
-  assert.match(res.body, /Culture Club member/);
+  assert.match(res.body, /Circuit FM member/);
 });

@@ -1,4 +1,4 @@
-// Admin: assign a printed NFC card to a Culture Club member at first handover.
+// Admin: assign a printed NFC card to a Circuit FM member at first handover.
 // This is the "Floor moment" — the curator has a physical card in hand and a
 // member in front of them. Called from admin.html.
 //

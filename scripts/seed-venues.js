@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Seed Culture Club venues from scripts/venues-seed.json into production.
+// Seed Circuit FM venues from scripts/venues-seed.json into production.
 //
 // Usage:
 //   BROADCAST_SECRET=<value> node scripts/seed-venues.js [--base-url=<url>]
 //
-// Defaults to https://www.cccircuit.com. Pass a different --base-url to run
+// Defaults to https://circuit.fm. Pass a different --base-url to run
 // against a preview deployment.
 //
 // Idempotent: api/venues.js POST upserts on a slug derived from venue name,
@@ -13,7 +13,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const BASE_URL_DEFAULT = "https://www.cccircuit.com";
+const BASE_URL_DEFAULT = "https://circuit.fm";
 const SEED_PATH = path.join(__dirname, "venues-seed.json");
 
 function parseArgs(argv) {

@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Culture Club</title>
-  <meta name="description" content="A members' club with no house. We go to culture together.">
-  <meta property="og:title" content="Culture Club">
-  <meta property="og:description" content="A members' club with no house. We go to culture together.">
-  <meta property="og:image" content="https://cccircuit.com/og.png">
-  <meta property="og:url" content="https://cccircuit.com">
+  <title>Circuit FM</title>
+  <meta name="description" content="A members' club with no house. It moves with you. Launching London 2026.">
+  <meta property="og:title" content="Circuit FM. A members' club with no house.">
+  <meta property="og:description" content="It moves with you. Launching London 2026.">
+  <meta property="og:image" content="https://circuit.fm/og.png">
+  <meta property="og:url" content="https://circuit.fm">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Culture Club">
-  <meta name="twitter:description" content="A members' club with no house. We go to culture together.">
-  <meta name="twitter:image" content="https://cccircuit.com/og.png">
-  <link rel="canonical" href="https://cccircuit.com">
+  <meta name="twitter:title" content="Circuit FM. A members' club with no house.">
+  <meta name="twitter:description" content="It moves with you. Launching London 2026.">
+  <meta name="twitter:image" content="https://circuit.fm/og.png">
+  <link rel="canonical" href="https://circuit.fm">
   <script defer src="/_vercel/insights/script.js"></script>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='68' text-anchor='middle' font-family='monospace' font-size='48' font-weight='600' fill='%23FF4400'>CC</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='68' text-anchor='middle' font-family='monospace' font-size='52' font-weight='600' fill='%23FF4400'>C</text></svg>">
   <style>
     *, *::before, *::after {
       margin: 0;
@@ -42,7 +42,7 @@
     body {
       background: var(--bg);
       color: var(--text-primary);
-      font-family: var(--mono);
+      font-family: var(--sans);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -64,6 +64,7 @@
     }
 
     .wordmark {
+      font-family: var(--mono);
       font-size: 18px;
       font-weight: 600;
       color: var(--text-primary);
@@ -79,7 +80,6 @@
     .nav-links a {
       color: var(--text-primary);
       text-decoration: none;
-      font-family: var(--mono);
       font-size: 14px;
       font-weight: 400;
       transition: opacity 100ms linear;
@@ -110,29 +110,32 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0;
-      font-size: clamp(12px, 3.6vw, 48px);
-      font-weight: 400;
-      line-height: 1.6;
-      text-transform: lowercase;
+      gap: 24px;
       width: 100%;
+      max-width: 720px;
     }
 
-    .line1, .line2 {
-      text-align: center;
-      white-space: nowrap;
+    .brand {
+      font-family: var(--mono);
+      font-size: clamp(40px, 9vw, 96px);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--text-primary);
     }
 
-    .pill {
-      background: var(--accent);
-      border-radius: 2px;
-      padding: 0.05em 0.35em;
-      position: relative;
-      display: inline;
+    .subline {
+      font-size: clamp(16px, 2.6vw, 24px);
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--text-primary);
     }
 
-    .pill-text {
-      transition: opacity 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    .supporting {
+      font-size: clamp(13px, 1.8vw, 16px);
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-secondary);
     }
 
     .email-wrap {
@@ -145,7 +148,7 @@
     .join-btn {
       background: var(--accent);
       color: var(--bg);
-      font-family: var(--mono);
+      font-family: var(--sans);
       font-size: 16px;
       font-weight: 600;
       border: none;
@@ -202,7 +205,7 @@
       background: none;
       border: none;
       outline: none;
-      font-family: var(--mono);
+      font-family: var(--sans);
       font-size: 16px;
       color: var(--text-primary);
       min-width: 0;
@@ -216,7 +219,7 @@
       background: none;
       border: none;
       color: var(--accent);
-      font-family: var(--mono);
+      font-family: var(--sans);
       font-size: 20px;
       cursor: pointer;
       padding: 0 4px;
@@ -229,9 +232,9 @@
     }
 
     .email-hint {
-      font-family: var(--mono);
       font-size: 12px;
       color: var(--text-secondary);
+      letter-spacing: 0.01em;
     }
 
     /* Footer */
@@ -239,19 +242,8 @@
       flex-shrink: 0;
       text-align: center;
       padding-bottom: 16px;
-      font-family: var(--mono);
       font-size: 12px;
       color: var(--text-secondary);
-    }
-
-    footer a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: opacity 100ms linear;
-    }
-
-    footer a:hover {
-      opacity: 0.7;
     }
 
     /* About overlay */
@@ -274,19 +266,23 @@
     }
 
     .about-content {
-      font-family: var(--mono);
-      font-size: clamp(11px, 2.8vw, 18px);
+      font-size: clamp(14px, 2.4vw, 18px);
       font-weight: 400;
       color: var(--text-primary);
-      text-transform: lowercase;
       text-align: center;
-      line-height: 2;
+      line-height: 1.6;
       padding: 24px;
-      white-space: nowrap;
+      max-width: 560px;
+    }
+
+    .about-content .brand-mark {
+      font-family: var(--mono);
+      font-weight: 600;
+      letter-spacing: -0.02em;
     }
 
     .about-content p + p {
-      margin-top: 1.5em;
+      margin-top: 1.25em;
     }
 
     /* Desktop */
@@ -305,10 +301,10 @@
 <body>
   <div class="page">
     <nav>
-      <span class="wordmark">Culture Club</span>
+      <span class="wordmark">Circuit FM</span>
       <div class="nav-links">
         <a href="#" id="about-link">about</a>
-        <a href="https://instagram.com/cccircuit" aria-label="Instagram">
+        <a href="https://instagram.com/circuit.fm" aria-label="Instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="2" width="20" height="20" rx="5"/>
             <circle cx="12" cy="12" r="5"/>
@@ -320,59 +316,33 @@
 
     <main class="hero">
       <h1 class="headline">
-        <span class="line1">a members' club with no house.</span>
-        <span class="line2">we go to <span class="pill"><span class="pill-text" id="rotating">film screenings</span></span> together.</span>
+        <span class="brand">Circuit FM</span>
+        <span class="subline">A members' club with no house. It moves with you.</span>
+        <span class="supporting">Tap in at any venue. See who's here. Connect if you want to.</span>
       </h1>
       <div class="email-wrap">
-        <button class="join-btn" id="join-btn" type="button">Join the club →</button>
+        <button class="join-btn" id="join-btn" type="button">Get on the list →</button>
         <div class="email-reveal" id="email-reveal">
           <form class="email-input" id="email-form">
-            <input type="text" id="name" placeholder="your name" autocomplete="name" required>
             <input type="email" id="email" placeholder="you@email.com" autocomplete="email" required>
             <button type="submit" class="email-submit" id="email-submit">→</button>
           </form>
-          <span class="email-hint">enter your name and email to join.</span>
+          <span class="email-hint">Curated outings. Member-only access. Launching London 2026.</span>
         </div>
       </div>
     </main>
-
-    <footer>
-      <a href="https://meetcircuit.com">Circuit</a>
-    </footer>
   </div>
 
   <div class="about-overlay" id="about-overlay">
     <div class="about-content">
-      <p>a members' club with no house.</p>
-      <p>no building. no dress code.</p>
-      <p>just culture, together.</p>
-      <p>enter your email. we'll be in touch.</p>
+      <p><span class="brand-mark">Circuit FM</span>. A members' club with no house.</p>
+      <p>It moves with you.</p>
+      <p>Tap in at any venue. See who's here. Connect if you want to.</p>
+      <p>Curated outings. Member-only access. Launching London 2026.</p>
     </div>
   </div>
 
   <script>
-    const items = [
-      'film screenings',
-      'comedy nights',
-      'supper clubs',
-      'gallery openings',
-      'run clubs',
-      'late-night jazz',
-      'spoken word',
-      'open studios'
-    ];
-    let index = 0;
-    const el = document.getElementById('rotating');
-
-    setInterval(() => {
-      index = (index + 1) % items.length;
-      el.style.opacity = '0';
-      setTimeout(() => {
-        el.textContent = items[index];
-        el.style.opacity = '1';
-      }, 150);
-    }, 2500);
-
     // Email reveal + form
     document.getElementById('join-btn').addEventListener('click', () => {
       document.getElementById('join-btn').classList.add('hidden');
@@ -388,8 +358,7 @@
     document.getElementById('email-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value.trim();
-      const name = document.getElementById('name').value.trim();
-      if (!email || !name) return;
+      if (!email) return;
       const btn = document.getElementById('email-submit');
       btn.textContent = '...';
       try {
@@ -399,7 +368,7 @@
         const signupPromise = fetch('/api/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name }),
+          body: JSON.stringify({ email }),
         });
         const vouchPromise = voucherId
           ? fetch('/api/vouch', {
@@ -416,8 +385,8 @@
         if (!signupRes.ok) throw new Error('signup failed');
         const result = await signupRes.json();
         const msg = result.duplicate
-          ? "you're already on the list."
-          : "you're on the list.";
+          ? "You're already on the list."
+          : "You're on the list.";
         document.getElementById('email-reveal').innerHTML =
           '<span class="email-hint">' + msg + '</span>';
       } catch (err) {

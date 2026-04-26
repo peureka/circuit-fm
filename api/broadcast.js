@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
   const resendKey = process.env.RESEND_API_KEY;
   const segmentId = process.env.RESEND_SEGMENT_ID;
   const from =
-    process.env.RESEND_FROM || "Culture Club <onboarding@resend.dev>";
+    process.env.RESEND_FROM || "Circuit FM <onboarding@resend.dev>";
 
   if (!resendKey || !segmentId) {
     return res.status(500).json({ error: "Missing RESEND_API_KEY or RESEND_SEGMENT_ID" });

@@ -15,7 +15,7 @@ const admin = require("firebase-admin");
 const { topN } = require("../lib/scoring");
 
 const DEFAULT_LIMIT = 50;
-const FALLBACK_NAME = "A Culture Club member";
+const FALLBACK_NAME = "A Circuit FM member";
 
 function createHandler({ db }) {
   return async function handler(req, res) {

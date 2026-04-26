@@ -1,8 +1,8 @@
-// Tap landing route. A Culture Club member's card's NFC chip emits
-// https://cccircuit.com/c/<chipUid>. When a friend taps their phone, we:
+// Tap landing route. A Circuit FM member's card's NFC chip emits
+// https://circuit.fm/c/<chipUid>. When a friend taps their phone, we:
 //   1. resolve the chip → member via the `cards` and `members` collections
 //   2. render a landing page naming the vouching member + CTA to join
-// UUIDs on chips, no HMAC — Culture Club invites are disposable credentials.
+// UUIDs on chips, no HMAC — Circuit FM invites are disposable credentials.
 
 const admin = require("firebase-admin");
 const { escapeHtml } = require("../../lib/templates");
@@ -13,14 +13,14 @@ function wrapPage(body) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Culture Club</title>
+<title>Circuit FM</title>
 <style>
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
-  body{background:#000;color:#fff;font-family:"SF Mono","JetBrains Mono",monospace;-webkit-font-smoothing:antialiased}
+  body{background:#000;color:#fff;font-family:"Inter","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
   .page{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:24px}
   nav{display:flex;justify-content:space-between;align-items:center}
-  .wordmark{font-size:18px;font-weight:600;letter-spacing:-0.02em}
+  .wordmark{font-family:"SF Mono","JetBrains Mono","Fira Code",monospace;font-size:18px;font-weight:600;letter-spacing:-0.02em}
   main{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:640px;margin:0 auto;width:100%;padding:32px 0}
   h1{font-family:"Inter","Helvetica Neue",sans-serif;font-size:clamp(28px,5vw,44px);font-weight:500;line-height:1.15;letter-spacing:-0.02em;margin-bottom:24px}
   .strapline{font-size:14px;color:#A0A0A0;margin-bottom:40px;line-height:1.6}
@@ -31,9 +31,8 @@ function wrapPage(body) {
 </head>
 <body>
 <div class="page">
-<nav><span class="wordmark">Culture Club</span></nav>
+<nav><span class="wordmark">Circuit FM</span></nav>
 <main>${body}</main>
-<footer><a href="https://meetcircuit.com">Circuit</a></footer>
 </div>
 </body>
 </html>`;
@@ -43,30 +42,30 @@ function renderLanding({ memberName, memberId }) {
   const safeName = escapeHtml(memberName);
   const safeId = encodeURIComponent(memberId);
   return wrapPage(`
-<h1>${safeName} thinks you belong in Culture Club.</h1>
-<p class="strapline">a members' club with no house. we go to culture together.</p>
-<a class="cta" href="/?v=${safeId}">Join the queue →</a>`);
+<h1>${safeName} thinks you belong in Circuit FM.</h1>
+<p class="strapline">A members' club with no house. It moves with you.</p>
+<a class="cta" href="/?v=${safeId}">Get on the list →</a>`);
 }
 
 function renderNotFound() {
   return wrapPage(`
 <h1>Card not recognised.</h1>
-<p class="strapline">This card isn't active in Culture Club. If you think that's wrong, ask the person who gave it to you to check with the curator.</p>
-<a class="cta" href="/">Back to Culture Club →</a>`);
+<p class="strapline">This card isn't active in Circuit FM. If you think that's wrong, ask the person who gave it to you to check with the curator.</p>
+<a class="cta" href="/">Back to Circuit FM →</a>`);
 }
 
 function renderGone() {
   return wrapPage(`
 <h1>This card is no longer active.</h1>
-<p class="strapline">The member it belonged to has retired or replaced it. Ask them for their new card, or join the queue directly below.</p>
-<a class="cta" href="/">Join the queue →</a>`);
+<p class="strapline">The member it belonged to has retired or replaced it. Ask them for their new card, or get on the list directly below.</p>
+<a class="cta" href="/">Get on the list →</a>`);
 }
 
 function renderError() {
   return wrapPage(`
 <h1>Something went wrong.</h1>
-<p class="strapline">We couldn't resolve this card right now. Please try again shortly, or join the queue directly below.</p>
-<a class="cta" href="/">Join the queue →</a>`);
+<p class="strapline">We couldn't resolve this card right now. Please try again shortly, or get on the list directly below.</p>
+<a class="cta" href="/">Get on the list →</a>`);
 }
 
 function createHandler({ db }) {
@@ -114,7 +113,7 @@ function createHandler({ db }) {
       const memberName =
         typeof member.name === "string" && member.name.trim().length > 0
           ? member.name.trim()
-          : "A Culture Club member";
+          : "A Circuit FM member";
 
       return res.status(200).send(
         renderLanding({

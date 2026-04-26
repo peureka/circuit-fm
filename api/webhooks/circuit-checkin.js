@@ -1,10 +1,10 @@
-// Webhook receiver: Circuit attendance.created events → Culture Club attendance.
+// Webhook receiver: Circuit attendance.created events → Circuit FM attendance.
 //
 // Contract matches Circuit's enterprise webhook dispatch (see
 // circuit/src/lib/enterprise-webhooks.ts). When a guest taps the Block at a
-// Culture Club event, Circuit POSTs here and we:
+// Circuit FM event, Circuit POSTs here and we:
 //   1. verify the Stripe-style signature (t=<ts>,v1=<hmac over `<ts>.<body>`>)
-//   2. resolve the Circuit eventId to a Culture Club outing via
+//   2. resolve the Circuit eventId to a Circuit FM outing via
 //      outings.circuit_event_id
 //   3. upsert an attendance doc, idempotent by (outing_id, email)
 //   4. advance any tapped vouches pointing at this email → floor (+3 score)

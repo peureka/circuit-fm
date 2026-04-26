@@ -6,7 +6,7 @@
 
 const admin = require("firebase-admin");
 
-const FALLBACK_MEMBER_NAME = "A Culture Club member";
+const FALLBACK_MEMBER_NAME = "A Circuit FM member";
 const STATUS_ORDER = { unassigned: 0, active: 1, lost: 2, disabled: 3 };
 
 function statusRank(status) {
