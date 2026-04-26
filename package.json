@@ -1,7 +1,7 @@
 {
-  "name": "cccircuit",
+  "name": "circuit-fm",
   "version": "1.0.0",
-  "description": "",
+  "description": "Circuit FM — a members' club with no house. It moves with you.",
   "main": "index.js",
   "scripts": {
     "test": "node --test"
@@ -11,16 +11,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/peureka/cccircuit.git"
+    "url": "git+https://github.com/peureka/circuit-fm.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/peureka/cccircuit/issues"
+    "url": "https://github.com/peureka/circuit-fm/issues"
   },
-  "homepage": "https://github.com/peureka/cccircuit#readme",
+  "homepage": "https://github.com/peureka/circuit-fm#readme",
   "dependencies": {
     "firebase-admin": "^13.7.0",
     "resend": "^6.9.4"
