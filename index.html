@@ -115,6 +115,13 @@
       max-width: 720px;
     }
 
+    .brand-ring {
+      display: block;
+      width: clamp(72px, 13vw, 144px);
+      height: clamp(72px, 13vw, 144px);
+      margin-bottom: 8px;
+    }
+
     .brand {
       font-family: var(--mono);
       font-size: clamp(40px, 9vw, 96px);
@@ -316,6 +323,9 @@
 
     <main class="hero">
       <h1 class="headline">
+        <svg class="brand-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          <circle cx="50" cy="50" r="36" fill="none" stroke="#FF4400" stroke-width="8"/>
+        </svg>
         <span class="brand">Circuit FM</span>
         <span class="subline">A members' club with no house. It moves with you.</span>
         <span class="supporting">Tap in at any venue. See who's here. Connect if you want to.</span>
