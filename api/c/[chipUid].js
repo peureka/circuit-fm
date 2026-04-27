@@ -72,13 +72,29 @@ function createHandler({ db }) {
   return async function handler(req, res) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
 
-    if (req.method !== "GET") {
+    // HEAD must mirror GET (status + headers, empty body) so link previewers
+    // (Slack, iMessage, Telegram) and uptime monitors don't see 405. Skip the
+    // Firestore lookups on HEAD — there's no body to render and previewer
+    // unfurls don't need card-status-level fidelity (the actual GET returns
+    // the right status when the user clicks).
+    const isHead = req.method === "HEAD";
+    if (req.method !== "GET" && !isHead) {
+      res.setHeader("Allow", "GET, HEAD");
       return res.status(405).send(renderNotFound());
     }
 
     const chipUid = req.query && req.query.chipUid;
     if (!chipUid || typeof chipUid !== "string") {
+      if (isHead) {
+        res.status(400);
+        return res.end();
+      }
       return res.status(400).send(renderNotFound());
+    }
+
+    if (isHead) {
+      res.status(200);
+      return res.end();
     }
 
     try {
