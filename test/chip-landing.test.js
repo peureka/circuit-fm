@@ -1,9 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
-const {
-  createHandler,
-} = require("/Users/roch/Code/cccircuit/api/c/[chipUid].js");
+const { createHandler } = require("../api/c/[chipUid].js");
 const { createFakeFirestore } = require("./helpers/fakeFirestore");
 const { createFakeRes } = require("./helpers/fakeRes");
 
