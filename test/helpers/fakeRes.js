@@ -21,6 +21,11 @@ function createFakeRes() {
       this.headers[name] = value;
       return this;
     },
+    end(body) {
+      if (body !== undefined) this.body = body;
+      this.ended = true;
+      return this;
+    },
   };
   return res;
 }
