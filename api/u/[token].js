@@ -245,15 +245,29 @@ function createHandler({ circuit, baseUrl, token: orgToken }) {
   return async function handler(req, res) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
 
-    if (req.method !== "GET") {
+    // HEAD must mirror GET (status + headers, empty body) so link previewers
+    // (Slack, iMessage, Telegram) and uptime monitors don't see 405. Vercel
+    // doesn't auto-derive HEAD from GET — handle explicitly. We skip the
+    // Circuit fetch on HEAD since we don't render a body anyway.
+    const isHead = req.method === "HEAD";
+    if (req.method !== "GET" && !isHead) {
       res.status(405);
+      res.setHeader("Allow", "GET, HEAD");
       return res.send(renderPage({ token: "", profile: null, savedFlash: false, errorCode: "BAD_METHOD" }));
     }
 
     const token = req.query && req.query.token;
     if (!token || typeof token !== "string" || token.length < 8) {
       res.status(400);
+      if (isHead) return res.end();
       return res.send(renderPage({ token: "", profile: null, savedFlash: false, errorCode: "INVALID_TOKEN" }));
+    }
+
+    if (isHead) {
+      // We've validated the token shape; previewers / monitors get 200.
+      // Don't bother Circuit for the profile data — there's no body to fill.
+      res.status(200);
+      return res.end();
     }
 
     const savedFlash = req.query && req.query.saved === "1";

@@ -36,11 +36,38 @@ test("GET with non-string token returns 400 page", async () => {
   assert.equal(res.statusCode, 400);
 });
 
-test("non-GET returns 405", async () => {
+test("DELETE returns 405 with Allow: GET, HEAD", async () => {
   const handler = createHandler({ circuit: fakeCircuit() });
   const res = createFakeRes();
   await handler({ method: "DELETE", query: { token: TOKEN } }, res);
   assert.equal(res.statusCode, 405);
+  assert.equal(res.headers["Allow"], "GET, HEAD");
+});
+
+test("HEAD with valid token returns 200 with no body and skips Circuit fetch", async () => {
+  const circuit = fakeCircuit();
+  let circuitCalled = false;
+  circuit.getProfile = async () => {
+    circuitCalled = true;
+    return null;
+  };
+  const handler = createHandler({ circuit });
+  const res = createFakeRes();
+  await handler({ method: "HEAD", query: { token: TOKEN } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body, null, "HEAD must not write a body");
+  assert.equal(res.headers["Content-Type"], "text/html; charset=utf-8");
+  assert.equal(circuitCalled, false, "HEAD must not bother Circuit");
+  assert.equal(res.ended, true);
+});
+
+test("HEAD with missing token returns 400 with no body", async () => {
+  const handler = createHandler({ circuit: fakeCircuit() });
+  const res = createFakeRes();
+  await handler({ method: "HEAD", query: {} }, res);
+  assert.equal(res.statusCode, 400);
+  assert.equal(res.body, null);
+  assert.equal(res.ended, true);
 });
 
 test("GET with valid token renders the form HTML with circuit.fm aesthetic", async () => {
