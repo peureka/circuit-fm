@@ -97,13 +97,41 @@ test("GET with card pointing to missing member returns 500", async () => {
   assert.equal(res.statusCode, 500);
 });
 
-test("POST returns 405", async () => {
+test("POST returns 405 with Allow: GET, HEAD", async () => {
   const { handler } = makeHandler();
   const res = createFakeRes();
 
   await handler({ method: "POST", query: { chipUid: "abc" } }, res);
 
   assert.equal(res.statusCode, 405);
+  assert.equal(res.headers["Allow"], "GET, HEAD");
+});
+
+test("HEAD with valid chipUid returns 200 with no body and skips Firestore", async () => {
+  const db = createFakeFirestore();
+  // Intentionally do NOT seed the chipUid — HEAD should still return 200
+  // since we skip the Firestore lookup. Previewers don't need card-status
+  // fidelity; the actual GET reveals real status when clicked.
+  const { handler } = makeHandler({ db });
+  const res = createFakeRes();
+
+  await handler({ method: "HEAD", query: { chipUid: "any-shape" } }, res);
+
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body, null, "HEAD must not write a body");
+  assert.equal(res.headers["Content-Type"], "text/html; charset=utf-8");
+  assert.equal(res.ended, true);
+});
+
+test("HEAD with missing chipUid returns 400 with no body", async () => {
+  const { handler } = makeHandler();
+  const res = createFakeRes();
+
+  await handler({ method: "HEAD", query: {} }, res);
+
+  assert.equal(res.statusCode, 400);
+  assert.equal(res.body, null);
+  assert.equal(res.ended, true);
 });
 
 test("GET with missing chipUid returns 400", async () => {
