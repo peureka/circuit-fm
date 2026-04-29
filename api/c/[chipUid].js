@@ -43,7 +43,7 @@ function wrapPage(body) {
   h1{font-family:"Inter","Helvetica Neue",sans-serif;font-size:clamp(28px,5vw,44px);font-weight:500;line-height:1.15;letter-spacing:-0.02em;margin-bottom:24px}
   .strapline{font-size:14px;color:#A0A0A0;margin-bottom:40px;line-height:1.6}
   .cta{display:inline-block;background:#FF4400;color:#000;font-weight:600;text-decoration:none;padding:14px 28px;border-radius:2px;font-size:14px;letter-spacing:0.02em}
-  footer{font-size:12px;color:#A0A0A0}
+  footer{font-size:12px;color:#A0A0A0;margin-top:auto;padding-top:24px;display:flex;gap:16px}
   footer a{color:#A0A0A0;text-decoration:underline}
 </style>
 </head>
@@ -51,6 +51,7 @@ function wrapPage(body) {
 <div class="page">
 <nav><span class="wordmark">Circuit FM</span></nav>
 <main>${body}</main>
+<footer><a href="https://circuit.fm">circuit.fm</a><a href="https://circuit.fm/terms">Terms</a></footer>
 </div>
 </body>
 </html>`;
@@ -135,7 +136,7 @@ function renderCirclePreview({ subjectName, connections }) {
 <ul class="circle">${namesHtml}</ul>
 <a class="cta" href="/?v=${encodeURIComponent(safeName)}">Get on the list →</a>
 </main>
-<footer><a href="https://circuit.fm">circuit.fm</a></footer>
+<footer><a href="https://circuit.fm">circuit.fm</a><a href="https://circuit.fm/terms">Terms</a></footer>
 </div>
 </body>
 </html>`;
