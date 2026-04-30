@@ -4,6 +4,7 @@
     { "source": "/board", "destination": "/board.html" },
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/release", "destination": "/release.html" },
     { "source": "/c/:chipUid", "destination": "/api/c/:chipUid" },
     { "source": "/u/:token", "destination": "/api/u/:token" },
     { "source": "/b/:chipUid", "destination": "/api/b/:chipUid" },

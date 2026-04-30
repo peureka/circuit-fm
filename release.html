@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Release — Circuit FM</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><rect width='32' height='32' rx='6' fill='%230A0A0A'/><circle cx='16' cy='16' r='9' stroke='%23FF4400' stroke-width='2.5' fill='none'/></svg>">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0A0A0A;--text:#F5F5F5;--muted:#A0A0A0;--accent:#FF4400;--accent-dim:rgba(255,68,0,0.3);--border:rgba(255,255,255,0.12);
+      --sans:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+      --mono:"SF Mono","Cascadia Code","Fira Code","Consolas",monospace;
+    }
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.6;font-size:15px;min-height:100vh;min-height:100dvh}
+    .page{max-width:480px;margin:0 auto;padding:32px 24px 80px}
+    nav{margin-bottom:48px}
+    .wordmark{font-size:16px;font-weight:600;color:var(--text);text-decoration:none;letter-spacing:-0.02em}
+    h1{font-size:28px;font-weight:600;letter-spacing:-0.02em;margin-bottom:12px;line-height:1.15}
+    .lead{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+    form{display:flex;flex-direction:column;gap:16px}
+    label{font-size:13px;color:var(--muted);font-weight:500}
+    input[type=text],input[type=email]{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--sans);font-size:15px;padding:12px 14px;height:46px;outline:none;transition:border-color 100ms linear;width:100%}
+    input[type=text]:focus,input[type=email]:focus{border-color:var(--accent)}
+    .consent-row{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--border);border-radius:2px;background:rgba(255,255,255,0.02);margin-top:8px}
+    .consent-row input[type=checkbox]{margin-top:3px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0;cursor:pointer}
+    .consent-row label{font-size:14px;color:var(--text);line-height:1.5;cursor:pointer;font-weight:400}
+    .submit{background:var(--accent);color:var(--bg);font-family:var(--sans);font-size:15px;font-weight:600;border:none;border-radius:2px;height:46px;cursor:pointer;transition:opacity 100ms linear;margin-top:8px}
+    .submit:hover{opacity:0.85}
+    .submit:disabled{opacity:0.5;cursor:not-allowed}
+    .fine{font-size:12px;color:var(--muted);line-height:1.5;margin-top:8px}
+    .fine a{color:var(--muted);text-decoration:underline}
+    .fine a:hover{color:var(--text)}
+    .success{padding:24px;border:1px solid var(--accent-dim);background:rgba(255,68,0,0.05);border-radius:2px;text-align:center}
+    .success-title{font-size:16px;font-weight:600;margin-bottom:6px}
+    .success-body{font-size:14px;color:var(--muted)}
+    .error{font-size:13px;color:var(--accent);margin-top:4px}
+    footer{margin-top:64px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);font-size:12px;color:var(--muted);display:flex;gap:16px}
+    footer a{color:var(--muted);text-decoration:underline}
+  </style>
+</head>
+<body>
+<div class="page">
+  <nav><a class="wordmark" href="/">Circuit FM</a></nav>
+
+  <h1>Content release</h1>
+  <p class="lead">Sign here to let Circuit FM use footage of you. This is a standalone release — separate from membership. If you signed up to Circuit FM, you don't need this; the <a href="/terms#content-consent" style="color:var(--accent)">Terms (Section 3)</a> already cover it.</p>
+
+  <form id="release-form" autocomplete="on" novalidate>
+    <input type="hidden" name="referrer" id="referrer">
+
+    <div>
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required maxlength="100" autocomplete="name">
+    </div>
+
+    <div>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required maxlength="254" autocomplete="email">
+    </div>
+
+    <div class="consent-row">
+      <input type="checkbox" id="consent" name="consent" required>
+      <label for="consent">I consent to Circuit FM using footage of me on Instagram, TikTok, YouTube, and circuit.fm.</label>
+    </div>
+
+    <p class="fine">Full scope and takedown process in our <a href="/terms#content-consent">Terms, Section 3</a>. You can request removal at any time by emailing <a href="mailto:circuit@avdience.com">circuit@avdience.com</a>.</p>
+
+    <button type="submit" class="submit" id="submit">Sign release</button>
+    <p class="error" id="error" hidden></p>
+  </form>
+
+  <div class="success" id="success" hidden>
+    <p class="success-title">Your release is on file.</p>
+    <p class="success-body">Thank you. You can close this tab.</p>
+  </div>
+
+  <footer>
+    <a href="/">circuit.fm</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+  </footer>
+</div>
+
+<script>
+  // Capture the full URL (including ?shoot=day1 query params Ciara may append)
+  // so the server-side record traces back to the shoot.
+  document.getElementById('referrer').value = window.location.href;
+
+  const form = document.getElementById('release-form');
+  const submitBtn = document.getElementById('submit');
+  const errorEl = document.getElementById('error');
+  const successEl = document.getElementById('success');
+
+  function showError(msg) {
+    errorEl.textContent = msg;
+    errorEl.hidden = false;
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Sign release';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.hidden = true;
+
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const consent = form.consent.checked;
+
+    if (!name || !email || !consent) {
+      showError('Please fill in your name, email, and tick the consent box.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '...';
+
+    try {
+      const res = await fetch('/api/release', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          consent: true,
+          referrer: form.referrer.value || window.location.href,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        showError(body.error || 'Something went wrong. Try again or email circuit@avdience.com.');
+        return;
+      }
+      form.hidden = true;
+      successEl.hidden = false;
+    } catch (err) {
+      console.error(err);
+      showError('Network error. Try again or email circuit@avdience.com.');
+    }
+  });
+</script>
+</body>
+</html>
