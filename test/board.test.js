@@ -101,7 +101,7 @@ test("Missing member doc falls back to a generic label", async () => {
 
   assert.equal(res.statusCode, 200);
   assert.equal(res.body.entries.length, 1);
-  assert.match(res.body.entries[0].name, /Circuit FM member/);
+  assert.match(res.body.entries[0].name, /Circuit member/);
   assert.equal(res.body.entries[0].score, 14);
 });
 

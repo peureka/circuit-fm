@@ -81,7 +81,7 @@ test("GET with valid token renders the form HTML with circuit.fm aesthetic", asy
   assert.match(res.body, /name="token" value="valid-token-aaaaaaaaaaaaaaaa"/);
   // Brand tokens
   assert.match(res.body, /#FF4400/);
-  assert.match(res.body, /Circuit FM/);
+  assert.match(res.body, /Circuit/);
 });
 
 test("GET with ?saved=1 includes the toast HTML", async () => {
@@ -115,7 +115,7 @@ test("GET pre-fills chips from existing profile values", async () => {
     circuit: fakeCircuit({
       profile: {
         email: "alex@example.com",
-        organiserName: "Circuit FM",
+        organiserName: "Circuit",
         instagramHandle: "alex",
         neighbourhoods: ["shoreditch", "hackney"],
         availableNights: ["thu", "fri"],
@@ -161,7 +161,7 @@ test("HTML-escapes user-controlled email content from Circuit", async () => {
     circuit: fakeCircuit({
       profile: {
         email: "alex+<script>alert(1)</script>@example.com",
-        organiserName: "Circuit FM",
+        organiserName: "Circuit",
         instagramHandle: null,
         neighbourhoods: [],
         availableNights: [],

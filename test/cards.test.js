@@ -96,7 +96,7 @@ test("GET falls back to generic label when active card's member doc is missing",
   await handler(authed("GET"), res);
 
   const card = res.body.cards.find((c) => c.chipUid === "orphan");
-  assert.match(card.member_name, /Circuit FM member/);
+  assert.match(card.member_name, /Circuit member/);
 });
 
 test("GET unassigned cards have no member_name field or null", async () => {

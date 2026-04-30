@@ -31,7 +31,7 @@ function wrapPage(body) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Circuit FM</title>
+<title>Circuit</title>
 <style>
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
@@ -49,7 +49,7 @@ function wrapPage(body) {
 </head>
 <body>
 <div class="page">
-<nav><span class="wordmark">Circuit FM</span></nav>
+<nav><span class="wordmark">Circuit</span></nav>
 <main>${body}</main>
 <footer><a href="https://circuit.fm">circuit.fm</a><a href="https://circuit.fm/privacy">Privacy</a><a href="https://circuit.fm/terms">Terms</a></footer>
 </div>
@@ -65,15 +65,15 @@ function renderLanding({ memberName, memberId }) {
   // moves on. The homepage already carries the post-Soho tagline.
   return wrapPage(`
 <h1>${safeName} gave you their card.</h1>
-<p class="strapline">That's how Circuit FM works.</p>
+<p class="strapline">That's how Circuit works.</p>
 <a class="cta" href="/?v=${safeId}">Get on the list →</a>`);
 }
 
 function renderNotFound() {
   return wrapPage(`
 <h1>Card not recognised.</h1>
-<p class="strapline">This card isn't active in Circuit FM. If you think that's wrong, ask the person who gave it to you to check with the curator.</p>
-<a class="cta" href="/">Back to Circuit FM →</a>`);
+<p class="strapline">This card isn't active in Circuit. If you think that's wrong, ask the person who gave it to you to check with the curator.</p>
+<a class="cta" href="/">Back to Circuit →</a>`);
 }
 
 function renderGone() {
@@ -142,7 +142,7 @@ function renderCirclePreview({ subject, connections }) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Circuit FM — ${safeName}'s circle</title>
+<title>Circuit — ${safeName}'s circle</title>
 <style>
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
@@ -168,7 +168,7 @@ function renderCirclePreview({ subject, connections }) {
 </head>
 <body>
 <div class="page">
-<nav><span class="wordmark">Circuit FM</span></nav>
+<nav><span class="wordmark">Circuit</span></nav>
 <main>
 <div class="subject-row">${subjectAvatar}<div><p class="label" style="margin-bottom:4px">${safeName.toUpperCase()}'S CIRCLE</p><p class="preamble" style="margin:0;font-size:13px">For 24 hours. After that the window closes.</p></div></div>
 <h1>You're seeing who's in the room.</h1>
@@ -185,7 +185,7 @@ function renderCircleLapsed({ subjectName }) {
   const safeName = escapeHtml(subjectName || "A member");
   return wrapPage(`
 <h1>The window closed.</h1>
-<p class="strapline">You had 24 hours to see ${safeName}'s circle. To stay inside the network, you have to be in it. Get on the list — Circuit FM is invite-only.</p>
+<p class="strapline">You had 24 hours to see ${safeName}'s circle. To stay inside the network, you have to be in it. Get on the list — Circuit is invite-only.</p>
 <a class="cta" href="/">Get on the list →</a>`);
 }
 
@@ -266,10 +266,10 @@ function createHandler({ db }) {
           return res.status(500).send(renderError());
         }
         const subject = result.subject || {
-          displayName: "A Circuit FM member",
+          displayName: "A Circuit member",
           photoUrl: null,
         };
-        const subjectName = subject.displayName || "A Circuit FM member";
+        const subjectName = subject.displayName || "A Circuit member";
 
         // 24-hour cookie window: first view sets the timestamp, later
         // views check it. After 24h the user sees the lapse view.
@@ -325,7 +325,7 @@ function createHandler({ db }) {
       const memberName =
         typeof member.name === "string" && member.name.trim().length > 0
           ? member.name.trim()
-          : "A Circuit FM member";
+          : "A Circuit member";
 
       return res.status(200).send(
         renderLanding({

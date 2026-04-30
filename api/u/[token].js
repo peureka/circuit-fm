@@ -1,4 +1,4 @@
-// Subscriber profile form for Circuit FM. Lives on circuit.fm/u/<token>.
+// Subscriber profile form for Circuit. Lives on circuit.fm/u/<token>.
 // Renders an HTML form pre-filled from Circuit's
 // GET /api/organiser/v1/audience/profile (when that endpoint is live).
 // The form posts to /api/u/save which proxies to Circuit.
@@ -64,7 +64,7 @@ function renderChips(name, options, selected) {
 function renderPage({ token, profile, savedFlash, errorCode }) {
   const safeToken = escapeHtml(token);
   const email = escapeHtml(profile?.email ?? "");
-  const organiserName = escapeHtml(profile?.organiserName ?? "Circuit FM");
+  const organiserName = escapeHtml(profile?.organiserName ?? "Circuit");
   const handle = escapeHtml(
     (profile?.instagramHandle ?? "").replace(/^@+/, "")
   );
@@ -90,7 +90,7 @@ function renderPage({ token, profile, savedFlash, errorCode }) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Your profile · Circuit FM</title>
+  <title>Your profile · Circuit</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'><rect width='32' height='32' rx='6' fill='%230A0A0A'/><circle cx='16' cy='16' r='9' stroke='%23FF4400' stroke-width='2.5' fill='none'/></svg>">
   <style>
     *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
@@ -175,7 +175,7 @@ function renderPage({ token, profile, savedFlash, errorCode }) {
 </head>
 <body>
   <div class="page">
-    <nav><span class="wordmark">Circuit FM</span></nav>
+    <nav><span class="wordmark">Circuit</span></nav>
 
     <header>
       <p class="org-eyebrow">${organiserName}</p>

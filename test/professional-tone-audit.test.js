@@ -1,4 +1,4 @@
-// Professional tone audit — Circuit FM CI gate.
+// Professional tone audit — Circuit CI gate.
 //
 // Mirrors `circuit/src/lib/professional-tone-audit.test.ts`. Scans
 // member-facing surfaces (the homepage, the release form, the
@@ -127,7 +127,7 @@ test("findBannedMatch returns null for the canonical FM voice lines", () => {
     "Tap in at any venue. See who's here. Connect if you want to.",
     "After that the window closes.",
     "We never track you across organisers without consent.",
-    "X gave you their card. That's how Circuit FM works.",
+    "X gave you their card. That's how Circuit works.",
     "OFFLINE · CHECK-INS STILL WORK",
     "DIDN'T CATCH",
     "YOU'RE IN",

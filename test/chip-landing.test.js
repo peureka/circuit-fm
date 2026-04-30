@@ -37,7 +37,7 @@ test("GET with a valid active card renders HTML naming the vouching member", asy
   assert.equal(res.headers["Content-Type"], "text/html; charset=utf-8");
   assert.match(res.body, /Ada Lovelace/);
   assert.match(res.body, /gave you their card/);
-  assert.match(res.body, /That's how Circuit FM works/);
+  assert.match(res.body, /That's how Circuit works/);
   assert.match(res.body, /\/\?v=member-1/);
 });
 
@@ -174,5 +174,5 @@ test("member without a name falls back to a generic label", async () => {
   await handler({ method: "GET", query: { chipUid: "nameless-card" } }, res);
 
   assert.equal(res.statusCode, 200);
-  assert.match(res.body, /Circuit FM member/);
+  assert.match(res.body, /Circuit member/);
 });
