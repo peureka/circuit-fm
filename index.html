@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Circuit</title>
+  <title>Circuit FM</title>
   <meta name="description" content="A members' club with no house. It moves with you. London 2026.">
-  <meta property="og:title" content="Circuit. A members' club with no house.">
+  <meta property="og:title" content="Circuit FM. A members' club with no house.">
   <meta property="og:description" content="It moves with you. London 2026.">
   <meta property="og:image" content="https://circuit.fm/og.png">
   <meta property="og:url" content="https://circuit.fm">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Circuit. A members' club with no house.">
+  <meta name="twitter:title" content="Circuit FM. A members' club with no house.">
   <meta name="twitter:description" content="It moves with you. London 2026.">
   <meta name="twitter:image" content="https://circuit.fm/og.png">
   <link rel="canonical" href="https://circuit.fm">
@@ -32,15 +32,13 @@
       --sans: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     }
 
-    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--text-primary);
       font-family: var(--sans);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      display: flex;
-      flex-direction: column;
     }
 
     /* Nav */
@@ -77,9 +75,9 @@
     .nav-links a:hover { opacity: 0.7; }
     .nav-links a svg { display: block; width: 18px; height: 18px; }
 
-    /* Hero — fills the viewport. The homepage is signal-only. */
+    /* Hero */
     .hero {
-      flex: 1;
+      min-height: 100vh;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
@@ -134,14 +132,11 @@
       letter-spacing: -0.01em;
     }
 
-    /* Supporting line — wraps on small viewports rather than render at
-       sub-10px. Per CIRCUIT_FM_DESIGN_BRIEF.md §B.5. */
     .supporting {
-      font-size: clamp(12px, 2.6vw, 14px);
+      font-size: clamp(11px, 2.4vw, 14px);
       font-weight: 400;
       line-height: 1.5;
       color: var(--text-secondary);
-      max-width: 32ch;
     }
 
     .email-wrap {
@@ -222,6 +217,137 @@
       letter-spacing: 0.01em;
     }
 
+    /* Sections */
+    section {
+      padding: 80px 24px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .section-rule {
+      width: 48px;
+      height: 2px;
+      background: var(--accent);
+      margin-bottom: 32px;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-heading {
+      font-size: clamp(24px, 4.5vw, 36px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+
+    .section-body {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #C0C0C0;
+    }
+    .section-body + .section-body { margin-top: 16px; }
+
+    /* Gestures */
+    .gestures {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 40px;
+    }
+    .gesture {
+      display: flex;
+      gap: 20px;
+      align-items: baseline;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .gesture:first-child { border-top: 1px solid var(--border); }
+    .gesture-number {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      flex-shrink: 0;
+      width: 24px;
+    }
+    .gesture-text {
+      font-size: 17px;
+      line-height: 1.5;
+    }
+    .gesture-text strong { color: var(--text-primary); }
+    .gesture-sub {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Membership perks */
+    .perks {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 40px;
+    }
+    .perk {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .perk:first-child { border-top: 1px solid var(--border); }
+    .perk-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .perk-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Divider section */
+    .divider-section {
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .divider-ring {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      margin: 0 auto;
+      opacity: 0.4;
+    }
+
+    /* Final CTA */
+    .final-cta {
+      padding: 80px 24px 100px;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .final-heading {
+      font-size: clamp(24px, 5vw, 40px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .final-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
     /* Footer */
     footer {
       padding: 24px;
@@ -238,6 +364,7 @@
 
     @media (min-width: 768px) {
       nav { padding: 24px 40px; }
+      section { padding: 100px 40px; }
       .hero { padding: 100px 40px 80px; }
     }
   </style>
@@ -245,7 +372,7 @@
 <body>
 
   <nav>
-    <a class="wordmark" href="/">Circuit</a>
+    <a class="wordmark" href="/">Circuit FM</a>
     <div class="nav-links">
       <a href="https://instagram.com/circuit.fm" aria-label="Instagram">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -257,13 +384,13 @@
     </div>
   </nav>
 
-  <!-- HERO — the entire page. Signal-only. Per CIRCUIT_FM_DESIGN_BRIEF.md §B.1. -->
+  <!-- HERO -->
   <div class="hero">
     <h1 class="headline">
       <div class="brand-ring-scene" aria-hidden="true">
         <div class="brand-ring"></div>
       </div>
-      <span class="brand">Circuit</span>
+      <span class="brand">Circuit FM</span>
       <span class="subline">A members' club with no house. It moves with you.</span>
       <span class="supporting">Tap in at any venue. See who's here. Connect if you want to.</span>
     </h1>
@@ -279,10 +406,95 @@
     </div>
   </div>
 
+  <!-- HOW IT WORKS -->
+  <section>
+    <div class="section-rule"></div>
+    <p class="section-label">How it works</p>
+    <h2 class="section-heading">One product. Three gestures.</h2>
+    <p class="section-body">Every interaction in Circuit FM starts with a tap. No downloads, no check-ins, no passwords. You tap, you're in.</p>
+    <div class="gestures">
+      <div class="gesture">
+        <span class="gesture-number">01</span>
+        <div>
+          <p class="gesture-text"><strong>Tap a venue.</strong> Block on the wall. You're checked in.</p>
+          <p class="gesture-sub">Other members can see you're here tonight.</p>
+        </div>
+      </div>
+      <div class="gesture">
+        <span class="gesture-number">02</span>
+        <div>
+          <p class="gesture-text"><strong>Tap a room.</strong> Block on the door. You're at this event.</p>
+          <p class="gesture-sub">The organiser sees you on their guest list.</p>
+        </div>
+      </div>
+      <div class="gesture">
+        <span class="gesture-number">03</span>
+        <div>
+          <p class="gesture-text"><strong>Tap a person.</strong> Their Card. You're invited to join.</p>
+          <p class="gesture-sub">Every member carries a Card. Every Card is an invitation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-section"><div class="divider-ring" aria-hidden="true"></div></div>
+
+  <!-- WHAT MEMBERS GET -->
+  <section>
+    <div class="section-rule"></div>
+    <p class="section-label">Membership</p>
+    <h2 class="section-heading">Access opens with attendance.</h2>
+    <p class="section-body">No annual fee. No application form. Membership is earned by showing up. The more you attend, the earlier you see what's coming.</p>
+    <div class="perks">
+      <div class="perk">
+        <p class="perk-title">Curated outings</p>
+        <p class="perk-desc">Screenings, supper clubs, gallery visits, movement. Four formats on rotation across London's best venues and members' clubs.</p>
+      </div>
+      <div class="perk">
+        <p class="perk-title">See who's here</p>
+        <p class="perk-desc">Tap in at any venue. See which other members are there tonight. Open, closed, or ghost. You control your visibility.</p>
+      </div>
+      <div class="perk">
+        <p class="perk-title">Connect</p>
+        <p class="perk-desc">Say hi to someone in the room. One tap. No chat, no DMs, no profiles. The conversation happens in person.</p>
+      </div>
+      <div class="perk">
+        <p class="perk-title">Venue access</p>
+        <p class="perk-desc">4 passes per month to events at partner venues, including top members' clubs. Places you can't normally get into.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-section"><div class="divider-ring" aria-hidden="true"></div></div>
+
+  <!-- HOW TO JOIN -->
+  <section>
+    <div class="section-rule"></div>
+    <p class="section-label">How to join</p>
+    <h2 class="section-heading">Three ways in. No open signup.</h2>
+    <p class="section-body">Tap a member's Card. Pass The List. Or get on the waitlist below. Circuit FM is invite-only. The room is the point.</p>
+  </section>
+
+  <!-- FINAL CTA -->
+  <div class="final-cta">
+    <h2 class="final-heading">London 2026.</h2>
+    <p class="final-sub">Get on the list. We'll tell you when the first outing is.</p>
+    <div class="email-wrap">
+      <button class="join-btn" id="join-btn-2" type="button">Get on the list</button>
+      <div class="email-reveal" id="email-reveal-2">
+        <form class="email-input" id="email-form-2">
+          <input type="email" id="email-2" placeholder="you@email.com" autocomplete="email" required>
+          <button type="submit" class="email-submit">→</button>
+        </form>
+        <span class="email-hint">No spam. Just outings.</span>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <span>&copy; 2026</span>
     <div class="footer-links">
-      <a href="/privacy">Privacy</a>
+      <a href="https://meetcircuit.com/privacy">Privacy</a>
       <a href="/terms">Terms</a>
     </div>
   </footer>
@@ -338,6 +550,7 @@
     }
 
     setupEmailForm('join-btn', 'email-reveal', 'email-form', 'email');
+    setupEmailForm('join-btn-2', 'email-reveal-2', 'email-form-2', 'email-2');
   </script>
 </body>
 </html>

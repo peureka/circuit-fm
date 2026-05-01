@@ -15,6 +15,26 @@ service cloud.firestore {
             && request.resource.data.name.size() < 100));
       allow read, delete: if false;
     }
+
+    // Content release form (api/release.js writes here when someone signs the
+    // standalone /release form during The List shoots). Public unauth create
+    // because the form is public; admin-only read; no client deletes.
+    // Schema kept loose enough for the existing api/release.js shape (which
+    // writes a `referrer` URL, not a `shoot` slug) while still rejecting
+    // arbitrary keys.
+    match /releases/{docId} {
+      allow create, update: if
+        request.resource.data.keys().hasOnly(['name', 'email', 'consent', 'consent_at', 'consented_at', 'referrer', 'shoot'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() < 100
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 5
+        && request.resource.data.email.size() < 100
+        && request.resource.data.email.matches('.*@.*[.].*')
+        && request.resource.data.consent == true;
+      allow read, delete: if false;
+    }
     match /{document=**} {
       allow read, write: if false;
     }
