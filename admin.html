@@ -652,18 +652,37 @@ $('#preview-btn').addEventListener('click', async () => {
 $('#send-btn').addEventListener('click', async () => {
   const p = buildBroadcastPayload();
   if (!p) { setStatus('b-status', 'fill in the fields.', 'err'); return; }
-  if (!confirm('send this broadcast to the full list?')) return;
+  // Two-key send: a separate confirm token (BROADCAST_CONFIRM_TOKEN in env)
+  // is required by the server. Cache it in sessionStorage so it only has to
+  // be typed once per browser session — same UX as the admin login token.
+  let confirmToken = sessionStorage.getItem('cc_confirm');
+  if (!confirmToken) {
+    confirmToken = prompt('confirm token (BROADCAST_CONFIRM_TOKEN) — required to send:');
+    if (!confirmToken) { setStatus('b-status', 'send cancelled.', ''); return; }
+    sessionStorage.setItem('cc_confirm', confirmToken);
+  }
   if (pendingOutingIds.length) p.outingIds = pendingOutingIds;
   setStatus('b-status', 'sending...');
   try {
-    const res = await api('/api/broadcast', { method: 'POST', body: JSON.stringify(p) });
+    const res = await api('/api/broadcast', {
+      method: 'POST',
+      body: JSON.stringify(p),
+      headers: { 'X-Broadcast-Confirm': confirmToken },
+    });
     const d = await res.json();
     if (d.ok) {
-      setStatus('b-status', 'sent.', 'ok');
+      const q = d.quota ? ` (${d.quota.daily}/${d.quota.dailyMax} today)` : '';
+      setStatus('b-status', 'sent.' + q, 'ok');
       pendingOutingIds = [];
       loadBroadcastHistory();
     }
-    else setStatus('b-status', d.error || 'failed.', 'err');
+    else {
+      // Wrong confirm token → clear cache so the next send re-prompts.
+      if (res.status === 401 && /Confirm/i.test(d.error || '')) {
+        sessionStorage.removeItem('cc_confirm');
+      }
+      setStatus('b-status', d.error || 'failed.', 'err');
+    }
   } catch { setStatus('b-status', 'send failed.', 'err'); }
 });
 
