@@ -2,21 +2,38 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 const { createHandler } = require("../api/provision-card");
-const { createFakeFirestore } = require("./helpers/fakeFirestore");
 const { createFakeRes } = require("./helpers/fakeRes");
 
 const SECRET = "prov-test-secret";
 
+function makeFakeCircuit({ reservedChips = new Set() } = {}) {
+  const calls = [];
+  return {
+    calls,
+    reservedChips,
+    async reserveCard({ chipUid }) {
+      calls.push({ chipUid });
+      if (reservedChips.has(chipUid)) {
+        const err = new Error(
+          `circuit /api/organiser/v1/cards/reserve failed [CONFLICT]: memberCode or chipUid already exists`,
+        );
+        throw err;
+      }
+      reservedChips.add(chipUid);
+      return { memberCode: `mbr_${chipUid}`, chipUid, reservedAt: new Date().toISOString() };
+    },
+  };
+}
+
 function makeHandler(overrides = {}) {
-  const db = overrides.db || createFakeFirestore();
+  const circuitClient = overrides.circuitClient || makeFakeCircuit();
   return {
     handler: createHandler({
-      db,
+      circuitClient,
       adminSecret: SECRET,
-      timestamp: () => new Date("2026-04-24T00:00:00Z"),
       ...overrides,
     }),
-    db,
+    circuitClient,
   };
 }
 
@@ -28,61 +45,38 @@ function authed(body) {
   };
 }
 
-test("POST with chipUids array creates unassigned card docs", async () => {
-  const { handler, db } = makeHandler();
+test("POST with chipUids array reserves cards via Circuit", async () => {
+  const { handler, circuitClient } = makeHandler();
   const res = createFakeRes();
 
-  await handler(
-    authed({ chipUids: ["chip-a", "chip-b", "chip-c"] }),
-    res,
-  );
+  await handler(authed({ chipUids: ["chip-a", "chip-b", "chip-c"] }), res);
 
   assert.equal(res.statusCode, 200);
   assert.equal(res.body.created, 3);
   assert.equal(res.body.skipped, 0);
-
-  for (const id of ["chip-a", "chip-b", "chip-c"]) {
-    const doc = await db.collection("cards").doc(id).get();
-    assert.equal(doc.exists, true);
-    assert.equal(doc.data().status, "unassigned");
-    assert.equal(doc.data().member_id, null);
-    assert.ok(doc.data().created_at);
-  }
+  assert.equal(circuitClient.calls.length, 3);
+  assert.deepEqual(
+    circuitClient.calls.map((c) => c.chipUid),
+    ["chip-a", "chip-b", "chip-c"],
+  );
 });
 
-test("POST skips chipUids that are already provisioned (idempotent)", async () => {
-  const db = createFakeFirestore();
-  // Pre-seed one already-active card
-  await db.collection("cards").doc("chip-a").set({
-    member_id: "member-x",
-    status: "active",
-  });
-
-  const { handler } = makeHandler({ db });
+test("POST treats Circuit CONFLICT response as skipped (idempotent)", async () => {
+  const fake = makeFakeCircuit({ reservedChips: new Set(["chip-a"]) });
+  const { handler } = makeHandler({ circuitClient: fake });
   const res = createFakeRes();
 
-  await handler(
-    authed({ chipUids: ["chip-a", "chip-b"] }),
-    res,
-  );
+  await handler(authed({ chipUids: ["chip-a", "chip-b"] }), res);
 
   assert.equal(res.statusCode, 200);
   assert.equal(res.body.created, 1);
   assert.equal(res.body.skipped, 1);
-
-  // chip-a not overwritten
-  const a = await db.collection("cards").doc("chip-a").get();
-  assert.equal(a.data().status, "active");
-  assert.equal(a.data().member_id, "member-x");
 });
 
 test("POST without auth returns 401", async () => {
   const { handler } = makeHandler();
   const res = createFakeRes();
-  await handler(
-    { method: "POST", body: { chipUids: ["x"] } },
-    res,
-  );
+  await handler({ method: "POST", body: { chipUids: ["x"] } }, res);
   assert.equal(res.statusCode, 401);
 });
 
@@ -101,7 +95,7 @@ test("POST with non-array chipUids returns 400", async () => {
 });
 
 test("POST trims and dedups whitespace / duplicate chipUids", async () => {
-  const { handler, db } = makeHandler();
+  const { handler, circuitClient } = makeHandler();
   const res = createFakeRes();
   await handler(
     authed({ chipUids: ["chip-1", "  chip-1  ", "chip-2", ""] }),
@@ -110,9 +104,26 @@ test("POST trims and dedups whitespace / duplicate chipUids", async () => {
 
   assert.equal(res.statusCode, 200);
   assert.equal(res.body.created, 2);
+  assert.equal(circuitClient.calls.length, 2);
+});
 
-  const snap = await db.collection("cards").get();
-  assert.equal(snap.docs.length, 2);
+test("POST reports unexpected errors in `errors` array (non-conflict failures)", async () => {
+  const fake = {
+    calls: [],
+    async reserveCard({ chipUid }) {
+      this.calls.push({ chipUid });
+      throw new Error("upstream 500");
+    },
+  };
+  const { handler } = makeHandler({ circuitClient: fake });
+  const res = createFakeRes();
+  await handler(authed({ chipUids: ["chip-a"] }), res);
+
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.created, 0);
+  assert.equal(res.body.skipped, 0);
+  assert.equal(res.body.failed, 1);
+  assert.equal(res.body.errors[0].chipUid, "chip-a");
 });
 
 test("GET returns 405", async () => {

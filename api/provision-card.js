@@ -1,16 +1,18 @@
-// Admin: pre-register a batch of chipUids as "unassigned" cards. Run this
-// once when you've programmed a fresh batch of NFC cards with NFC Tools,
-// so the admin panel knows the cards exist (and can show them as stock
-// available for handover).
+// Admin: pre-register a batch of chipUids as Circuit card reservations.
+// Run once after programming a fresh batch of NFC cards with NFC Tools so
+// the admin panel knows the cards exist and can show them as stock.
 //
-// Idempotent: chipUids that already exist as card docs are skipped, never
-// overwritten. This makes re-running safe.
+// Post-consolidation: writes go to Circuit's Postgres via the organiser API
+// (POST /api/organiser/v1/cards/reserve). Idempotent at the chip level — a
+// chipUid that already has a reservation in Postgres returns 409 from
+// Circuit and is reported as "skipped" here.
 //
-// Auth: Bearer BROADCAST_SECRET.
+// Auth: Bearer BROADCAST_SECRET (cccircuit admin gate, not the Circuit API
+// token — that lives in the env and is consumed by circuitClient).
 
-const admin = require("firebase-admin");
+const { createCircuitClient } = require("../lib/circuit-client");
 
-function createHandler({ db, adminSecret, timestamp }) {
+function createHandler({ circuitClient, adminSecret }) {
   return async function handler(req, res) {
     if (req.method !== "POST") {
       return res.status(405).json({ error: "Method not allowed" });
@@ -52,19 +54,15 @@ function createHandler({ db, adminSecret, timestamp }) {
 
     for (const chipUid of cleaned) {
       try {
-        const ref = db.collection("cards").doc(chipUid);
-        const existing = await ref.get();
-        if (existing.exists) {
+        await circuitClient.reserveCard({ chipUid });
+        created++;
+      } catch (err) {
+        // Circuit returns 409 with "[CONFLICT]" prefix in the error message
+        // when the chipUid already has a reservation; treat as skip.
+        if (err.message && err.message.includes("CONFLICT")) {
           skipped++;
           continue;
         }
-        await ref.set({
-          status: "unassigned",
-          member_id: null,
-          created_at: timestamp(),
-        });
-        created++;
-      } catch (err) {
         console.error(`Provision ${chipUid} failed:`, err);
         errors.push({ chipUid, error: err.message });
       }
@@ -79,20 +77,16 @@ function createHandler({ db, adminSecret, timestamp }) {
   };
 }
 
-// Production handler: lazy-init Firebase.
+// Production handler: lazy-init the Circuit client.
 let cachedProdHandler = null;
 function defaultHandler(req, res) {
   if (!cachedProdHandler) {
-    if (!admin.apps.length) {
-      const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-      });
-    }
     cachedProdHandler = createHandler({
-      db: admin.firestore(),
+      circuitClient: createCircuitClient({
+        baseUrl: process.env.CIRCUIT_API_BASE_URL,
+        token: process.env.CIRCUIT_API_TOKEN,
+      }),
       adminSecret: process.env.BROADCAST_SECRET,
-      timestamp: () => admin.firestore.FieldValue.serverTimestamp(),
     });
   }
   return cachedProdHandler(req, res);
