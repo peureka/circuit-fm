@@ -2,33 +2,56 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 const { createHandler } = require("../api/c/[chipUid].js");
-const { createFakeFirestore } = require("./helpers/fakeFirestore");
 const { createFakeRes } = require("./helpers/fakeRes");
 
-async function seed(db, { chipUid, memberId, card, member }) {
-  await db
-    .collection("cards")
-    .doc(chipUid)
-    .set({ member_id: memberId, status: "active", ...card });
-  if (member) {
-    await db.collection("members").doc(memberId).set(member);
-  }
+// Fake the Circuit organiser API client for the legacy /c/<chipUid> path.
+// Maps chipUid -> reservation row in the same shape lookupCardByChip
+// returns. `null` means 404 (not found OR cross-tenant — both surface as
+// null per the API contract).
+function makeFakeCircuit({ byChip = {} } = {}) {
+  return {
+    async lookupCardByChip(chipUid) {
+      return Object.prototype.hasOwnProperty.call(byChip, chipUid)
+        ? byChip[chipUid]
+        : null;
+    },
+  };
 }
 
 function makeHandler(overrides = {}) {
-  const db = overrides.db || createFakeFirestore();
-  const deps = { db, ...overrides };
-  return { handler: createHandler(deps), db };
+  const circuitClient = overrides.circuitClient || makeFakeCircuit();
+  return {
+    handler: createHandler({ circuitClient, ...overrides }),
+    circuitClient,
+  };
+}
+
+function reservation({
+  memberCode = "mbr_TEST",
+  chipUid = "chip-x",
+  voided = false,
+  claim = null,
+} = {}) {
+  return { memberCode, chipUid, voided, claim };
+}
+
+function claim({ id = "gp-1", displayName = null, photoUrl = null } = {}) {
+  return {
+    claimedAt: "2026-04-24T00:00:00.000Z",
+    globalProfile: { id, displayName, photoUrl },
+  };
 }
 
 test("GET with a valid active card renders HTML naming the vouching member", async () => {
-  const db = createFakeFirestore();
-  await seed(db, {
-    chipUid: "abc-123",
-    memberId: "member-1",
-    member: { name: "Ada Lovelace", email: "ada@example.com" },
+  const circuitClient = makeFakeCircuit({
+    byChip: {
+      "abc-123": reservation({
+        chipUid: "abc-123",
+        claim: claim({ id: "member-1", displayName: "Ada Lovelace" }),
+      }),
+    },
   });
-  const { handler } = makeHandler({ db });
+  const { handler } = makeHandler({ circuitClient });
   const res = createFakeRes();
 
   await handler({ method: "GET", query: { chipUid: "abc-123" } }, res);
@@ -51,15 +74,17 @@ test("GET with unknown chipUid returns 404 HTML", async () => {
   assert.equal(res.headers["Content-Type"], "text/html; charset=utf-8");
 });
 
-test("GET with card status 'lost' returns 410", async () => {
-  const db = createFakeFirestore();
-  await seed(db, {
-    chipUid: "lost-card",
-    memberId: "member-2",
-    card: { status: "lost" },
-    member: { name: "Someone", email: "s@example.com" },
+test("GET with a voided reservation returns 410", async () => {
+  const circuitClient = makeFakeCircuit({
+    byChip: {
+      "lost-card": reservation({
+        chipUid: "lost-card",
+        voided: true,
+        claim: claim({ id: "member-2", displayName: "Someone" }),
+      }),
+    },
   });
-  const { handler } = makeHandler({ db });
+  const { handler } = makeHandler({ circuitClient });
   const res = createFakeRes();
 
   await handler({ method: "GET", query: { chipUid: "lost-card" } }, res);
@@ -67,33 +92,30 @@ test("GET with card status 'lost' returns 410", async () => {
   assert.equal(res.statusCode, 410);
 });
 
-test("GET with card status 'disabled' returns 410", async () => {
-  const db = createFakeFirestore();
-  await seed(db, {
-    chipUid: "disabled-card",
-    memberId: "member-3",
-    card: { status: "disabled" },
-    member: { name: "Former Member", email: "f@example.com" },
+test("GET with an unbound (provisioned but never claimed) reservation returns 404", async () => {
+  const circuitClient = makeFakeCircuit({
+    byChip: {
+      "unbound": reservation({ chipUid: "unbound", claim: null }),
+    },
   });
-  const { handler } = makeHandler({ db });
+  const { handler } = makeHandler({ circuitClient });
   const res = createFakeRes();
 
-  await handler({ method: "GET", query: { chipUid: "disabled-card" } }, res);
+  await handler({ method: "GET", query: { chipUid: "unbound" } }, res);
 
-  assert.equal(res.statusCode, 410);
+  assert.equal(res.statusCode, 404);
 });
 
-test("GET with card pointing to missing member returns 500", async () => {
-  const db = createFakeFirestore();
-  await seed(db, {
-    chipUid: "orphan",
-    memberId: "ghost-member",
-    // No member doc seeded.
-  });
-  const { handler } = makeHandler({ db });
+test("GET surfaces 500 when the upstream lookup throws", async () => {
+  const circuitClient = {
+    async lookupCardByChip() {
+      throw new Error("upstream timeout");
+    },
+  };
+  const { handler } = makeHandler({ circuitClient });
   const res = createFakeRes();
 
-  await handler({ method: "GET", query: { chipUid: "orphan" } }, res);
+  await handler({ method: "GET", query: { chipUid: "boom" } }, res);
 
   assert.equal(res.statusCode, 500);
 });
@@ -108,12 +130,15 @@ test("POST returns 405 with Allow: GET, HEAD", async () => {
   assert.equal(res.headers["Allow"], "GET, HEAD");
 });
 
-test("HEAD with valid chipUid returns 200 with no body and skips Firestore", async () => {
-  const db = createFakeFirestore();
-  // Intentionally do NOT seed the chipUid — HEAD should still return 200
-  // since we skip the Firestore lookup. Previewers don't need card-status
-  // fidelity; the actual GET reveals real status when clicked.
-  const { handler } = makeHandler({ db });
+test("HEAD with valid chipUid returns 200 with no body and skips upstream lookup", async () => {
+  let lookupCalls = 0;
+  const circuitClient = {
+    async lookupCardByChip() {
+      lookupCalls++;
+      return null;
+    },
+  };
+  const { handler } = makeHandler({ circuitClient });
   const res = createFakeRes();
 
   await handler({ method: "HEAD", query: { chipUid: "any-shape" } }, res);
@@ -122,6 +147,7 @@ test("HEAD with valid chipUid returns 200 with no body and skips Firestore", asy
   assert.equal(res.body, null, "HEAD must not write a body");
   assert.equal(res.headers["Content-Type"], "text/html; charset=utf-8");
   assert.equal(res.ended, true);
+  assert.equal(lookupCalls, 0, "HEAD must skip upstream lookup");
 });
 
 test("HEAD with missing chipUid returns 400 with no body", async () => {
@@ -145,13 +171,18 @@ test("GET with missing chipUid returns 400", async () => {
 });
 
 test("member name with HTML-special chars is escaped", async () => {
-  const db = createFakeFirestore();
-  await seed(db, {
-    chipUid: "xss-card",
-    memberId: "xss-member",
-    member: { name: "<script>alert(1)</script>", email: "e@example.com" },
+  const circuitClient = makeFakeCircuit({
+    byChip: {
+      "xss-card": reservation({
+        chipUid: "xss-card",
+        claim: claim({
+          id: "xss-member",
+          displayName: "<script>alert(1)</script>",
+        }),
+      }),
+    },
   });
-  const { handler } = makeHandler({ db });
+  const { handler } = makeHandler({ circuitClient });
   const res = createFakeRes();
 
   await handler({ method: "GET", query: { chipUid: "xss-card" } }, res);
@@ -161,14 +192,16 @@ test("member name with HTML-special chars is escaped", async () => {
   assert.match(res.body, /&lt;script&gt;/);
 });
 
-test("member without a name falls back to a generic label", async () => {
-  const db = createFakeFirestore();
-  await seed(db, {
-    chipUid: "nameless-card",
-    memberId: "nameless-member",
-    member: { email: "n@example.com" }, // no name
+test("member without a displayName falls back to a generic label", async () => {
+  const circuitClient = makeFakeCircuit({
+    byChip: {
+      "nameless-card": reservation({
+        chipUid: "nameless-card",
+        claim: claim({ id: "nameless-member", displayName: null }),
+      }),
+    },
   });
-  const { handler } = makeHandler({ db });
+  const { handler } = makeHandler({ circuitClient });
   const res = createFakeRes();
 
   await handler({ method: "GET", query: { chipUid: "nameless-card" } }, res);

@@ -167,15 +167,30 @@ test("GET /c/<mbr_*> returns 410 when meetcircuit returns 410", async () => {
   }
 });
 
-test("GET /c/<chipUid> (legacy UUID) still routes through Firestore", async () => {
-  // Don't patch fetch — legacy path doesn't call meetcircuit.com
-  const db = createFakeFirestore();
-  await db
-    .collection("cards")
-    .doc("legacy-uuid-123")
-    .set({ member_id: "m1", status: "active" });
-  await db.collection("members").doc("m1").set({ name: "Legacy Member" });
-  const { handler } = { handler: createHandler({ db }) };
+test("GET /c/<chipUid> (legacy UUID, no mbr_ prefix) routes through Circuit organiser API", async () => {
+  // Post-Phase-4 consolidation: the legacy chipUid path no longer touches
+  // Firestore — it goes through circuitClient.lookupCardByChip. The
+  // dispatcher still recognises non-mbr_ codes as chipUids and skips the
+  // Phase 3 mbr_* preview branch.
+  const circuitClient = {
+    async lookupCardByChip(chipUid) {
+      if (chipUid !== "legacy-uuid-123") return null;
+      return {
+        memberCode: "mbr_LEGACY",
+        chipUid: "legacy-uuid-123",
+        voided: false,
+        claim: {
+          claimedAt: "2026-04-24T00:00:00.000Z",
+          globalProfile: {
+            id: "gp-legacy",
+            displayName: "Legacy Member",
+            photoUrl: null,
+          },
+        },
+      };
+    },
+  };
+  const handler = createHandler({ circuitClient });
   const res = createFakeRes();
 
   await handler(

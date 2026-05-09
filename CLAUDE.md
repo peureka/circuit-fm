@@ -1,3 +1,39 @@
+# circuit.fm / Culture Club (consumer surface)
+
+This repo is the static + Vercel Functions site at `circuit.fm`
+(forwarder: `cccircuit.com`). Culture Club is a first-party Organisation
+on the main Circuit Next.js app at `meetcircuit.com`.
+
+**Source of truth boundary (post-2026-05 consolidation):**
+
+| Concept | Lives in |
+|---|---|
+| Cards (chip → memberCode → member identity) | Circuit Postgres (`CardReservation`, `CardClaim`, `GlobalProfile`) — accessed via the organiser API |
+| Members (FM identity, claimed cards, profile) | Circuit Postgres (`GlobalProfile`) — accessed via the organiser API |
+| Broadcasts (campaign metadata, send history) | Circuit Postgres (`Campaign`) for audit; Resend remains the email pipeline |
+| Outings (Culture Club programming) | Firestore `outings` |
+| Vouches (Culture Club social-game state) | Firestore `vouches` |
+| Attendance (Culture Club leaderboard inputs) | Firestore `attendance` |
+| Signups (marketing funnel intake) | Firestore `signups` (also pushed to Circuit via audience/upsert) |
+| Releases (List shoot consent forms) | Firestore `releases` |
+
+**Do NOT write to Firestore for cards / members / broadcasts.** Those
+endpoints (`api/provision-card.js`, `api/cards.js`, `api/assign-card.js`,
+`api/c/[chipUid].js`, `api/broadcast.js`) call Circuit's organiser API
+via `lib/circuit-client.js`. Vouches / outings / leaderboard remain
+Firestore-native.
+
+**Required Vercel env vars for the Circuit-backed endpoints:**
+
+- `CIRCUIT_API_TOKEN` (sensitive) — long-lived `cirk_org_...` bearer
+  scoped to the Culture Club organiser.
+- `CIRCUIT_API_BASE_URL` — e.g. `https://meetcircuit.com`.
+
+If these are missing, the dependent endpoints will throw at first
+request (the client constructor refuses an empty token / baseUrl).
+
+---
+
 # memnant
 
 Project: not initialised — run `memnant init` first

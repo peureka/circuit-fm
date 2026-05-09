@@ -1,8 +1,10 @@
 // Tap landing route — dispatcher for both legacy and Phase-3 cards.
 //
-// LEGACY (chipUid, UUID): existing /c/<chipUid> resolves through
-// Firestore `cards` + `members` collections. Renders the simple
-// "vouching member → get on the list" landing.
+// LEGACY (chipUid, UUID): /c/<chipUid> resolves through Circuit's
+// organiser API (lookupCardByChip → CardReservation + CardClaim). Renders
+// the simple "vouching member → get on the list" landing. Post-Phase-4
+// consolidation: no Firestore read; the card binding is the source of
+// truth in Postgres.
 //
 // PHASE 3 (memberCode, "mbr_*"): a member's NFC card emits
 // https://circuit.fm/c/<memberCode>. The dispatcher detects the
@@ -18,7 +20,7 @@
 // CIRCUIT_FM_APP_SPEC §3 (Sub-PR 11B). Companion API endpoint at
 // meetcircuit.com /api/circles/preview/[memberCode] (Sub-PR 11A).
 
-const admin = require("firebase-admin");
+const { createCircuitClient } = require("../../lib/circuit-client");
 const { escapeHtml } = require("../../lib/templates");
 
 const CIRCUIT_API_BASE =
@@ -224,13 +226,13 @@ async function fetchCirclePreview(memberCode) {
   };
 }
 
-function createHandler({ db }) {
+function createHandler({ circuitClient }) {
   return async function handler(req, res) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
 
     // HEAD must mirror GET (status + headers, empty body) so link previewers
     // (Slack, iMessage, Telegram) and uptime monitors don't see 405. Skip the
-    // Firestore lookups on HEAD — there's no body to render and previewer
+    // upstream lookups on HEAD — there's no body to render and previewer
     // unfurls don't need card-status-level fidelity (the actual GET returns
     // the right status when the user clicks).
     const isHead = req.method === "HEAD";
@@ -254,8 +256,8 @@ function createHandler({ db }) {
     }
 
     // Phase 3 dispatch — `mbr_*`-prefixed codes are member codes from
-    // meetcircuit.com, not Firestore card UUIDs. Fetch from the
-    // Circle preview endpoint and render the 24-hour names list.
+    // meetcircuit.com, not chipUids. Fetch from the Circle preview
+    // endpoint and render the 24-hour names list.
     if (chipUid.startsWith("mbr_")) {
       try {
         const result = await fetchCirclePreview(chipUid);
@@ -294,43 +296,31 @@ function createHandler({ db }) {
     }
 
     try {
-      const cardSnap = await db.collection("cards").doc(chipUid).get();
-      if (!cardSnap.exists) {
+      const reservation = await circuitClient.lookupCardByChip(chipUid);
+      if (!reservation) {
         return res.status(404).send(renderNotFound());
       }
-      const card = cardSnap.data();
 
-      if (card.status && card.status !== "active") {
+      // Voided reservations: 410 Gone, same as legacy "lost" / "disabled".
+      if (reservation.voided) {
         return res.status(410).send(renderGone());
       }
 
-      if (!card.member_id) {
-        console.error(`Card ${chipUid} has no member_id`);
-        return res.status(500).send(renderError());
+      // Unbound reservation (provisioned but never claimed) — render the
+      // not-found page rather than a confusing empty landing. Operationally
+      // a curator should never hand out an unclaimed chip; treat as 404.
+      if (!reservation.claim) {
+        return res.status(404).send(renderNotFound());
       }
 
-      const memberSnap = await db
-        .collection("members")
-        .doc(card.member_id)
-        .get();
-
-      if (!memberSnap.exists) {
-        console.error(
-          `Card ${chipUid} points to missing member ${card.member_id}`,
-        );
-        return res.status(500).send(renderError());
-      }
-
-      const member = memberSnap.data();
       const memberName =
-        typeof member.name === "string" && member.name.trim().length > 0
-          ? member.name.trim()
-          : "A Circuit member";
+        (reservation.claim.globalProfile.displayName || "").trim() ||
+        "A Circuit member";
 
       return res.status(200).send(
         renderLanding({
           memberName,
-          memberId: card.member_id,
+          memberId: reservation.claim.globalProfile.id,
         }),
       );
     } catch (err) {
@@ -340,17 +330,15 @@ function createHandler({ db }) {
   };
 }
 
-// Production handler: lazy-init Firebase so require-time works in tests.
 let cachedProdHandler = null;
 function defaultHandler(req, res) {
   if (!cachedProdHandler) {
-    if (!admin.apps.length) {
-      const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-      });
-    }
-    cachedProdHandler = createHandler({ db: admin.firestore() });
+    cachedProdHandler = createHandler({
+      circuitClient: createCircuitClient({
+        baseUrl: process.env.CIRCUIT_API_BASE_URL,
+        token: process.env.CIRCUIT_API_TOKEN,
+      }),
+    });
   }
   return cachedProdHandler(req, res);
 }

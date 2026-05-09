@@ -25,6 +25,19 @@ function createFakeResend({ contactsCreate = "ok" } = {}) {
         return { id: "e_" + calls.emails.length };
       },
     },
+    broadcasts: {
+      async create(args) {
+        calls.broadcastCreates = calls.broadcastCreates || [];
+        calls.broadcastCreates.push(args);
+        const id = "b_" + calls.broadcastCreates.length;
+        return { data: { id } };
+      },
+      async send(broadcastId) {
+        calls.broadcastSends = calls.broadcastSends || [];
+        calls.broadcastSends.push({ broadcastId });
+        return { data: { id: broadcastId } };
+      },
+    },
     _calls: calls,
   };
 
