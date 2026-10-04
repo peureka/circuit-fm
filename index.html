@@ -4,15 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Circuit</title>
-  <meta name="description" content="A members' club with no house. It moves with you. London 2026.">
-  <meta property="og:title" content="Circuit. A members' club with no house.">
-  <meta property="og:description" content="It moves with you. London 2026.">
+  <meta name="description" content="Circuit is a social network that grows through physical encounters. London 2026.">
+  <meta property="og:title" content="Circuit. Meet again.">
+  <meta property="og:description" content="Circuit is a social network that grows through physical encounters. London 2026.">
   <meta property="og:image" content="https://circuit.fm/og.png">
   <meta property="og:url" content="https://circuit.fm">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Circuit. A members' club with no house.">
-  <meta name="twitter:description" content="It moves with you. London 2026.">
+  <meta name="twitter:title" content="Circuit. Meet again.">
+  <meta name="twitter:description" content="Circuit is a social network that grows through physical encounters. London 2026.">
   <meta name="twitter:image" content="https://circuit.fm/og.png">
   <link rel="canonical" href="https://circuit.fm">
   <script defer src="/_vercel/insights/script.js"></script>
@@ -144,84 +144,6 @@
       max-width: 32ch;
     }
 
-    .email-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .join-btn {
-      background: var(--accent);
-      color: var(--bg);
-      font-family: var(--sans);
-      font-size: 15px;
-      font-weight: 600;
-      border: none;
-      border-radius: 2px;
-      padding: 0 28px;
-      height: 46px;
-      min-height: 44px;
-      cursor: pointer;
-      transition: opacity 100ms linear;
-    }
-    .join-btn:hover { opacity: 0.85; }
-
-    .email-reveal {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      opacity: 0;
-      height: 0;
-      overflow: hidden;
-      transition: opacity 100ms linear;
-    }
-    .email-reveal.active { opacity: 1; height: auto; overflow: visible; }
-    .email-wrap .join-btn.hidden { display: none; }
-
-    .email-input {
-      display: flex;
-      align-items: center;
-      border: 1px solid var(--accent-dim);
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.05);
-      height: 46px;
-      max-width: 340px;
-      width: 100%;
-      padding: 0 14px;
-      gap: 10px;
-    }
-    .email-input input {
-      flex: 1;
-      background: none;
-      border: none;
-      outline: none;
-      font-family: var(--sans);
-      font-size: 15px;
-      color: var(--text-primary);
-      min-width: 0;
-    }
-    .email-input input::placeholder { color: rgba(255,255,255,0.25); }
-
-    .email-submit {
-      background: none;
-      border: none;
-      color: var(--accent);
-      font-family: var(--sans);
-      font-size: 18px;
-      cursor: pointer;
-      padding: 0 4px;
-      transition: opacity 100ms linear;
-    }
-    .email-submit:hover { opacity: 0.7; }
-
-    .email-hint {
-      font-size: 12px;
-      color: var(--text-secondary);
-      letter-spacing: 0.01em;
-    }
-
     /* Footer */
     footer {
       padding: 24px;
@@ -264,19 +186,9 @@
         <div class="brand-ring"></div>
       </div>
       <span class="brand">Circuit</span>
-      <span class="subline">A members' club with no house. It moves with you.</span>
+      <span class="subline">Circuit is a social network that grows through physical encounters.</span>
       <span class="supporting">Tap in at any venue. See who's here. Connect if you want to.</span>
     </h1>
-    <div class="email-wrap" id="hero-email">
-      <button class="join-btn" id="join-btn" type="button">Get on the list</button>
-      <div class="email-reveal" id="email-reveal">
-        <form class="email-input" id="email-form">
-          <input type="email" id="email" placeholder="you@email.com" autocomplete="email" required>
-          <button type="submit" class="email-submit" id="email-submit">→</button>
-        </form>
-        <span class="email-hint">Curated outings. Member-only access. London 2026.</span>
-      </div>
-    </div>
   </div>
 
   <footer>
@@ -287,57 +199,5 @@
     </div>
   </footer>
 
-  <script>
-    // Read voucher_id from ?v= query param
-    const voucherId = new URLSearchParams(window.location.search).get('v') || '';
-
-    function setupEmailForm(btnId, revealId, formId, inputId) {
-      const btn = document.getElementById(btnId);
-      const reveal = document.getElementById(revealId);
-      const form = document.getElementById(formId);
-      const input = document.getElementById(inputId);
-
-      btn.addEventListener('click', () => {
-        btn.classList.add('hidden');
-        reveal.classList.add('active');
-        input.focus();
-      });
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = input.value.trim();
-        if (!email) return;
-        const submitBtn = form.querySelector('.email-submit');
-        submitBtn.textContent = '...';
-        try {
-          const signupPromise = fetch('/api/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email }),
-          });
-          const vouchPromise = voucherId
-            ? fetch('/api/vouch', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ voucher_id: voucherId, email }),
-              }).catch(() => null)
-            : Promise.resolve(null);
-
-          const [signupRes] = await Promise.all([signupPromise, vouchPromise]);
-          if (!signupRes.ok) throw new Error('signup failed');
-          const result = await signupRes.json();
-          const msg = result.duplicate
-            ? "You're already on the list."
-            : "You're on the list.";
-          reveal.innerHTML = '<span class="email-hint">' + msg + '</span>';
-        } catch (err) {
-          console.error(err);
-          submitBtn.textContent = '→';
-        }
-      });
-    }
-
-    setupEmailForm('join-btn', 'email-reveal', 'email-form', 'email');
-  </script>
 </body>
 </html>

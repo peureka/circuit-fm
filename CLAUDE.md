@@ -1,5 +1,17 @@
 # circuit.fm / Culture Club (consumer surface)
 
+> **Deprecated, and its category is superseded (4 October 2026).** This repo
+> is the pre-consolidation FM site; `https://circuit.fm` is served by the
+> Circuit monorepo (see README.md). Under the Circuit Society, FM Circle and
+> Open Signal Amendment of 4 October 2026 (monorepo
+> `docs/strategy/CIRCUIT_SOCIETY_FM_CIRCLE_AND_OPEN_SIGNAL_AMENDMENT_2026-10-04.md`):
+> Circuit is a social network that grows through physical encounters;
+> **Circuit Society** is the institution of people and Rooms; **Your Circuit**
+> is a member's private people and Rooms; **FM means Founding Member**, never
+> a product or a membership; and the members'-club framing ("A members' club
+> with no house", "A membership for the city") is retired. Culture Club is
+> retired as a concept. Any copy written here follows that canon.
+
 This repo is the static + Vercel Functions site at `circuit.fm`
 (forwarder: `cccircuit.com`). Culture Club is a first-party Organisation
 on the main Circuit Next.js app at `meetcircuit.com`.
