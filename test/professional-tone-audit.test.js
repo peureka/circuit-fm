@@ -123,7 +123,9 @@ test("findBannedMatch returns null for the canonical FM voice lines", () => {
   // copy that *defines* the Member voice register. If any of these trip
   // the audit, the audit's broken, not the copy.
   const canonical = [
-    "A members' club with no house. It moves with you.",
+    // The members'-club line was retired on 4 October 2026 (Circuit Society
+    // amendment); the category line replaced it on index.html.
+    "Circuit is a social network that grows through physical encounters.",
     "Tap in at any venue. See who's here. Connect if you want to.",
     "After that the window closes.",
     "We never track you across organisers without consent.",
